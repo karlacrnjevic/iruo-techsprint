@@ -1,0 +1,32 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# Terraform variable files with possible secrets
+*.tfvars
+*.tfvars.json
+
+# SSH keys
+*.pem
+*.key
+id_rsa
+id_rsa.pub
+
+# Azure CLI / credentials
+.azure/
+
+# OpenStack credentials
+clouds.yaml
+secure.yaml
+openrc.sh
+
+# Ansible temporary files
+*.retry
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
