@@ -39,3 +39,15 @@ variable "vm_size" {
   type        = string
   default     = "Standard_B1s"
 }
+
+variable "developer_principal_ids" {
+  description = "Map of developer usernames to Microsoft Entra principal object IDs"
+  type        = map(string)
+  default     = {}
+}
+
+variable "lead_principal_id" {
+  description = "Microsoft Entra principal object ID for the TechSprint lead"
+  type        = string
+  default     = ""
+}
