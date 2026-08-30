@@ -51,3 +51,9 @@ variable "lead_principal_id" {
   type        = string
   default     = ""
 }
+
+variable "moodle_db_password" {
+  description = "Password for the local Moodle database user"
+  type        = string
+  sensitive   = true
+}

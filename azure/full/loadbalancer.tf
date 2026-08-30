@@ -32,10 +32,13 @@ resource "azurerm_network_interface_backend_address_pool_association" "developer
 }
 
 resource "azurerm_lb_probe" "http" {
-  name            = "http-probe"
-  loadbalancer_id = azurerm_lb.techsprint.id
-  protocol        = "Tcp"
-  port            = 80
+  name                = "http-probe"
+  loadbalancer_id     = azurerm_lb.techsprint.id
+  protocol            = "Http"
+  port                = 80
+  request_path        = "/moodle-health.html"
+  interval_in_seconds = 15
+  number_of_probes    = 2
 }
 
 resource "azurerm_lb_rule" "http" {

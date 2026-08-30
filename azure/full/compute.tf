@@ -21,6 +21,10 @@ resource "azurerm_linux_virtual_machine" "developer" {
   size                = var.vm_size
   admin_username      = var.admin_username
 
+  custom_data = base64encode(
+    file("${path.module}/scripts/moodle-bootstrap.sh")
+  )
+
   network_interface_ids = [
     azurerm_network_interface.developer[each.key].id
   ]
