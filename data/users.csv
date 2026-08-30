@@ -1,4 +1,4 @@
-ime;prezime;rola
-ana;anic;devops_lead
-luka;lukic;developer
-ivan;ivic;developer
+username,role,environment
+dev1,developer,dev
+dev2,developer,dev
+lead,lead,management
