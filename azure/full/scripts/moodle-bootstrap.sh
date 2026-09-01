@@ -20,7 +20,50 @@ apt-get install -y \
   php-zip \
   unzip \
   curl \
-  git
+  git \
+  fuse3
+
+# Install BlobFuse2 from Microsoft's Ubuntu repository
+wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb \
+  -O /tmp/packages-microsoft-prod.deb
+
+dpkg -i /tmp/packages-microsoft-prod.deb
+apt-get update
+apt-get install -y blobfuse2
+
+rm -f /tmp/packages-microsoft-prod.deb
+
+# Configure and mount Azure Blob Storage using Managed Identity
+BLOB_MOUNT="/mnt/moodle-backups"
+BLOB_CONFIG="/etc/blobfuse2-moodle.yaml"
+
+mkdir -p "$BLOB_MOUNT"
+
+cat > "$BLOB_CONFIG" <<EOF
+allow-other: true
+
+components:
+  - libfuse
+  - block_cache
+  - attr_cache
+  - azstorage
+
+block_cache:
+  block-size-mb: 16
+
+azstorage:
+  type: block
+  account-name: ${storage_account_name}
+  container: ${blob_container_name}
+  endpoint: blob.core.windows.net
+  mode: msi
+EOF
+
+chmod 600 "$BLOB_CONFIG"
+
+blobfuse2 mount "$BLOB_MOUNT" \
+  --config-file="$BLOB_CONFIG" \
+  --streaming
 
 systemctl enable apache2
 systemctl enable mariadb

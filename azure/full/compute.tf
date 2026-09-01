@@ -31,7 +31,9 @@ resource "azurerm_linux_virtual_machine" "developer" {
 
   custom_data = base64encode(
     templatefile("${path.module}/scripts/moodle-bootstrap.sh", {
-      moodle_db_password = var.moodle_db_password
+      moodle_db_password   = var.moodle_db_password
+      storage_account_name = azurerm_storage_account.developer[each.key].name
+      blob_container_name  = azurerm_storage_container.developer_backups[each.key].name
     })
   )
 
