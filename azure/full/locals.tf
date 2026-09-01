@@ -13,10 +13,21 @@ locals {
     if user.role == "lead"
   }
 
-  developer_subnets = {
+  developer_vnets = {
     for index, username in sort(keys(local.developers)) :
-    username => cidrsubnet(var.vnet_address_space[0], 8, index + 10)
+    username => cidrsubnet(var.vnet_address_space[0], 8, index + 1)
   }
 
-  management_subnet = "10.10.100.0/24"
+  developer_subnets = {
+    for username, cidr in local.developer_vnets :
+    username => cidrsubnet(cidr, 4, 0)
+  }
+
+  management_vnet   = "10.10.100.0/24"
+  management_subnet = "10.10.100.0/25"
+
+  common_tags = {
+    project     = "techsprint"
+    environment = "testing"
+  }
 }

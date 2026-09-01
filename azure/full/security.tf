@@ -5,6 +5,8 @@ resource "azurerm_network_security_group" "developer" {
   location            = azurerm_resource_group.techsprint.location
   resource_group_name = azurerm_resource_group.techsprint.name
 
+  tags = local.common_tags
+
   security_rule {
     name                       = "Allow-SSH-From-Management"
     priority                   = 100
@@ -46,6 +48,8 @@ resource "azurerm_network_security_group" "management" {
   name                = "nsg-management"
   location            = azurerm_resource_group.techsprint.location
   resource_group_name = azurerm_resource_group.techsprint.name
+
+  tags = local.common_tags
 
   security_rule {
     name                       = "Allow-SSH"

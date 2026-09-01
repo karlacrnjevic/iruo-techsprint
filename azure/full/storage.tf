@@ -7,6 +7,8 @@ resource "azurerm_managed_disk" "developer_data" {
   storage_account_type = "Standard_LRS"
   create_option        = "Empty"
   disk_size_gb         = 10
+
+  tags = local.common_tags
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "developer_data" {
@@ -18,24 +20,31 @@ resource "azurerm_virtual_machine_data_disk_attachment" "developer_data" {
   caching            = "ReadWrite"
 }
 
-resource "azurerm_storage_account" "techsprint" {
-  name                     = "sttechsprint${substr(md5(azurerm_resource_group.techsprint.name), 0, 8)}"
+resource "azurerm_storage_account" "developer" {
+  for_each = local.developers
+
+  name                     = "st${each.key}${substr(md5("${var.resource_group_name}-${each.key}"), 0, 8)}"
   resource_group_name      = azurerm_resource_group.techsprint.name
   location                 = azurerm_resource_group.techsprint.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+  min_tls_version          = "TLS1_2"
 
-  min_tls_version = "TLS1_2"
+  tags = local.common_tags
 }
 
-resource "azurerm_storage_container" "backups" {
+resource "azurerm_storage_container" "developer_backups" {
+  for_each = local.developers
+
   name                  = "moodle-backups"
-  storage_account_id    = azurerm_storage_account.techsprint.id
+  storage_account_id    = azurerm_storage_account.developer[each.key].id
   container_access_type = "private"
 }
 
-resource "azurerm_storage_share" "shared" {
+resource "azurerm_storage_share" "developer_shared" {
+  for_each = local.developers
+
   name               = "moodle-shared"
-  storage_account_id = azurerm_storage_account.techsprint.id
+  storage_account_id = azurerm_storage_account.developer[each.key].id
   quota              = 5
 }

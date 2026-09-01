@@ -5,6 +5,8 @@ resource "azurerm_network_interface" "developer" {
   location            = azurerm_resource_group.techsprint.location
   resource_group_name = azurerm_resource_group.techsprint.name
 
+  tags = local.common_tags
+
   ip_configuration {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.developer[each.key].id
@@ -21,8 +23,16 @@ resource "azurerm_linux_virtual_machine" "developer" {
   size                = var.vm_size
   admin_username      = var.admin_username
 
+  tags = local.common_tags
+
+  identity {
+    type = "SystemAssigned"
+  }
+
   custom_data = base64encode(
-    file("${path.module}/scripts/moodle-bootstrap.sh")
+    templatefile("${path.module}/scripts/moodle-bootstrap.sh", {
+      moodle_db_password = var.moodle_db_password
+    })
   )
 
   network_interface_ids = [
@@ -55,6 +65,8 @@ resource "azurerm_public_ip" "jump" {
   location            = azurerm_resource_group.techsprint.location
   allocation_method   = "Static"
   sku                 = "Standard"
+
+  tags = local.common_tags
 }
 
 resource "azurerm_network_interface" "jump" {
@@ -62,11 +74,14 @@ resource "azurerm_network_interface" "jump" {
   location            = azurerm_resource_group.techsprint.location
   resource_group_name = azurerm_resource_group.techsprint.name
 
+  tags = local.common_tags
+
   ip_configuration {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.management.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.jump.id
+
   }
 }
 
@@ -77,6 +92,8 @@ resource "azurerm_linux_virtual_machine" "jump" {
   size                = var.vm_size
   admin_username      = var.admin_username
 
+  tags = local.common_tags
+
   network_interface_ids = [
     azurerm_network_interface.jump.id
   ]
@@ -86,6 +103,7 @@ resource "azurerm_linux_virtual_machine" "jump" {
   admin_ssh_key {
     username   = var.admin_username
     public_key = file(pathexpand(var.ssh_public_key_path))
+
   }
 
   os_disk {

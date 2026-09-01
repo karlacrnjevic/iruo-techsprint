@@ -1,20 +1,15 @@
-resource "azurerm_public_ip" "lb" {
-  name                = "pip-techsprint-lb"
-  resource_group_name = azurerm_resource_group.techsprint.name
-  location            = azurerm_resource_group.techsprint.location
-  allocation_method   = "Static"
-  sku                 = "Standard"
-}
-
 resource "azurerm_lb" "techsprint" {
-  name                = "lb-techsprint"
+  name                = "lb-techsprint-internal"
   location            = azurerm_resource_group.techsprint.location
   resource_group_name = azurerm_resource_group.techsprint.name
   sku                 = "Standard"
+
+  tags = local.common_tags
 
   frontend_ip_configuration {
-    name                 = "public-frontend"
-    public_ip_address_id = azurerm_public_ip.lb.id
+    name                          = "internal-frontend"
+    subnet_id                     = azurerm_subnet.management.id
+    private_ip_address_allocation = "Dynamic"
   }
 }
 
@@ -47,7 +42,7 @@ resource "azurerm_lb_rule" "http" {
   protocol                       = "Tcp"
   frontend_port                  = 80
   backend_port                   = 80
-  frontend_ip_configuration_name = "public-frontend"
+  frontend_ip_configuration_name = "internal-frontend"
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.moodle.id]
   probe_id                       = azurerm_lb_probe.http.id
 }

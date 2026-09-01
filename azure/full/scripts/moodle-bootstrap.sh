@@ -28,6 +28,24 @@ systemctl enable mariadb
 systemctl start apache2
 systemctl start mariadb
 
+# Prepare and mount the additional managed data disk
+DATA_DISK="/dev/disk/azure/scsi1/lun0"
+DATA_MOUNT="/mnt/moodledata"
+
+mkdir -p "$DATA_MOUNT"
+
+if [ -b "$DATA_DISK" ]; then
+  if ! blkid "$DATA_DISK" >/dev/null 2>&1; then
+    mkfs.ext4 "$DATA_DISK"
+  fi
+
+  if ! grep -q "$DATA_DISK" /etc/fstab; then
+    echo "$DATA_DISK $DATA_MOUNT ext4 defaults,nofail 0 2" >> /etc/fstab
+  fi
+
+  mount -a
+fi
+
 mysql -e "CREATE DATABASE IF NOT EXISTS moodle DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 mysql -e "CREATE USER IF NOT EXISTS 'moodle'@'localhost' IDENTIFIED BY '${moodle_db_password}';"
 mysql -e "GRANT ALL PRIVILEGES ON moodle.* TO 'moodle'@'localhost';"
@@ -39,13 +57,18 @@ if [ ! -d /var/www/html/moodle ]; then
   git clone --depth 1 -b MOODLE_405_STABLE https://github.com/moodle/moodle.git /var/www/html/moodle
 fi
 
-mkdir -p /var/moodledata
+mkdir -p /mnt/moodledata/moodledata
+
+if [ ! -L /var/moodledata ]; then
+  rm -rf /var/moodledata
+  ln -s /mnt/moodledata/moodledata /var/moodledata
+fi
 
 chown -R www-data:www-data /var/www/html/moodle
-chown -R www-data:www-data /var/moodledata
+chown -R www-data:www-data /mnt/moodledata/moodledata
 
 chmod -R 755 /var/www/html/moodle
-chmod -R 770 /var/moodledata
+chmod -R 770 /mnt/moodledata/moodledata
 
 cat > /etc/apache2/sites-available/moodle.conf <<'APACHE'
 <VirtualHost *:80>
@@ -57,8 +80,8 @@ cat > /etc/apache2/sites-available/moodle.conf <<'APACHE'
         Require all granted
     </Directory>
 
-    ErrorLog ${APACHE_LOG_DIR}/moodle-error.log
-    CustomLog ${APACHE_LOG_DIR}/moodle-access.log combined
+    ErrorLog $${APACHE_LOG_DIR}/moodle-error.log
+    CustomLog $${APACHE_LOG_DIR}/moodle-access.log combined
 </VirtualHost>
 APACHE
 

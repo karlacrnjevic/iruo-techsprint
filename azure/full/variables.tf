@@ -37,7 +37,7 @@ variable "ssh_public_key_path" {
 variable "vm_size" {
   description = "Azure VM size used for developer environments"
   type        = string
-  default     = "Standard_B1s"
+  default     = "Standard_B2s"
 }
 
 variable "developer_principal_ids" {
