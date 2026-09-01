@@ -8,39 +8,47 @@ resource "azurerm_network_security_group" "developer" {
   tags = local.common_tags
 
   security_rule {
-    name                       = "Allow-SSH-From-Management"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = local.management_subnet
-    destination_address_prefix = "*"
+    name                   = "Allow-SSH-From-Management"
+    priority               = 100
+    direction              = "Inbound"
+    access                 = "Allow"
+    protocol               = "Tcp"
+    source_port_range      = "*"
+    destination_port_range = "22"
+    source_address_prefix  = local.management_subnet
+    destination_application_security_group_ids = [
+      azurerm_application_security_group.developer[each.key].id
+    ]
   }
 
   security_rule {
-    name                       = "Allow-HTTP"
-    priority                   = 110
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "80"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
+    name                   = "Allow-HTTP-To-Moodle"
+    priority               = 110
+    direction              = "Inbound"
+    access                 = "Allow"
+    protocol               = "Tcp"
+    source_port_range      = "*"
+    destination_port_range = "80"
+    source_address_prefix  = "*"
+
+    destination_application_security_group_ids = [
+      azurerm_application_security_group.developer[each.key].id
+    ]
   }
 
   security_rule {
-    name                       = "Allow-HTTPS"
-    priority                   = 120
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "443"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
+    name                   = "Allow-HTTPS-To-Moodle"
+    priority               = 120
+    direction              = "Inbound"
+    access                 = "Allow"
+    protocol               = "Tcp"
+    source_port_range      = "*"
+    destination_port_range = "443"
+    source_address_prefix  = "*"
+
+    destination_application_security_group_ids = [
+      azurerm_application_security_group.developer[each.key].id
+    ]
   }
 }
 
@@ -59,7 +67,7 @@ resource "azurerm_network_security_group" "management" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefix      = "*"
+    source_address_prefix      = var.admin_source_cidr
     destination_address_prefix = "*"
   }
 }

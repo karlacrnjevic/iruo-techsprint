@@ -57,3 +57,9 @@ variable "moodle_db_password" {
   type        = string
   sensitive   = true
 }
+
+variable "admin_source_cidr" {
+  description = "CIDR allowed to access the Jump Host over SSH"
+  type        = string
+  default     = "0.0.0.0/0"
+}
