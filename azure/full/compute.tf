@@ -34,6 +34,7 @@ resource "azurerm_linux_virtual_machine" "developer" {
       moodle_db_password   = var.moodle_db_password
       storage_account_name = azurerm_storage_account.developer[each.key].name
       blob_container_name  = azurerm_storage_container.developer_backups[each.key].name
+      file_share_name      = azurerm_storage_share.developer_shared[each.key].name
     })
   )
 

@@ -22,6 +22,7 @@ apt-get install -y \
   curl \
   git \
   fuse3
+  cifs-utils
 
 # Install BlobFuse2 from Microsoft's Ubuntu repository
 wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb \
@@ -30,8 +31,33 @@ wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-pr
 dpkg -i /tmp/packages-microsoft-prod.deb
 apt-get update
 apt-get install -y blobfuse2
+# Install Azure Files authentication helper
+apt-get install -y azfilesauth
 
 rm -f /tmp/packages-microsoft-prod.deb
+
+# Configure Azure Files authentication using the VM system-assigned Managed Identity
+azfilesauthmanager set \
+  "https://${storage_account_name}.file.core.windows.net" \
+  --system
+
+# Verify that the authentication ticket was created
+azfilesauthmanager list
+
+# Mount Azure Files share using Managed Identity authentication
+FILE_MOUNT="/mnt/moodle-shared"
+
+mkdir -p "$FILE_MOUNT"
+
+CREDENTIAL_ID=$(grep "credential-id:" /etc/azfilesauth/config.yaml | awk '{print $2}')
+
+mount -t cifs \
+  "//${storage_account_name}.file.core.windows.net/${file_share_name}" \
+  "$FILE_MOUNT" \
+  -o "sec=krb5,cruid=$CREDENTIAL_ID,dir_mode=0755,file_mode=0755,serverino,nosharesock,mfsymlinks,actimeo=30"
+
+# Enable automatic refresh of Managed Identity credentials
+systemctl enable --now azfilesrefresh
 
 # Configure and mount Azure Blob Storage using Managed Identity
 BLOB_MOUNT="/mnt/moodle-backups"

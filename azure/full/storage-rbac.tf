@@ -10,6 +10,6 @@ resource "azurerm_role_assignment" "developer_files" {
   for_each = local.developers
 
   scope                = azurerm_storage_account.developer[each.key].id
-  role_definition_name = "Storage File Data SMB Share Contributor"
+  role_definition_name = "Storage File Data SMB MI Admin"
   principal_id         = azurerm_linux_virtual_machine.developer[each.key].identity[0].principal_id
 }
