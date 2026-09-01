@@ -21,7 +21,7 @@ apt-get install -y \
   unzip \
   curl \
   git \
-  fuse3
+  fuse3 \
   cifs-utils
 
 # Install BlobFuse2 from Microsoft's Ubuntu repository
@@ -31,6 +31,7 @@ wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-pr
 dpkg -i /tmp/packages-microsoft-prod.deb
 apt-get update
 apt-get install -y blobfuse2
+
 # Install Azure Files authentication helper
 apt-get install -y azfilesauth
 
@@ -115,6 +116,7 @@ if [ -b "$DATA_DISK" ]; then
   mount -a
 fi
 
+# Prepare Moodle database
 mysql -e "CREATE DATABASE IF NOT EXISTS moodle DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 mysql -e "CREATE USER IF NOT EXISTS 'moodle'@'localhost' IDENTIFIED BY '${moodle_db_password}';"
 mysql -e "GRANT ALL PRIVILEGES ON moodle.* TO 'moodle'@'localhost';"
@@ -122,10 +124,14 @@ mysql -e "FLUSH PRIVILEGES;"
 
 rm -f /var/www/html/index.html
 
+# Download Moodle
 if [ ! -d /var/www/html/moodle ]; then
-  git clone --depth 1 -b MOODLE_405_STABLE https://github.com/moodle/moodle.git /var/www/html/moodle
+  git clone --depth 1 -b MOODLE_405_STABLE \
+    https://github.com/moodle/moodle.git \
+    /var/www/html/moodle
 fi
 
+# Prepare Moodle data directory on the managed disk
 mkdir -p /mnt/moodledata/moodledata
 
 if [ ! -L /var/moodledata ]; then
@@ -139,6 +145,26 @@ chown -R www-data:www-data /mnt/moodledata/moodledata
 chmod -R 755 /var/www/html/moodle
 chmod -R 770 /mnt/moodledata/moodledata
 
+# Complete Moodle installation if it has not been installed yet
+if [ ! -f /var/www/html/moodle/config.php ]; then
+  sudo -u www-data php /var/www/html/moodle/admin/cli/install.php \
+    --non-interactive \
+    --agree-license \
+    --wwwroot="${moodle_url}" \
+    --dataroot="/var/moodledata" \
+    --dbtype="mariadb" \
+    --dbhost="localhost" \
+    --dbname="moodle" \
+    --dbuser="moodle" \
+    --dbpass="${moodle_db_password}" \
+    --fullname="TechSprint Moodle" \
+    --shortname="TechSprint" \
+    --adminuser="admin" \
+    --adminpass="${moodle_db_password}" \
+    --adminemail="admin@example.com"
+fi
+
+# Configure Apache for Moodle
 cat > /etc/apache2/sites-available/moodle.conf <<'APACHE'
 <VirtualHost *:80>
     DocumentRoot /var/www/html/moodle
@@ -160,6 +186,7 @@ a2enmod rewrite
 
 systemctl restart apache2
 
+# Create simple health-check endpoint for Azure Load Balancer
 cat > /var/www/html/moodle-health.html <<'HTML'
 <!DOCTYPE html>
 <html>
