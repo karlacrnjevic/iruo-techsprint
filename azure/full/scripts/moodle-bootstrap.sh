@@ -37,10 +37,28 @@ apt-get install -y azfilesauth
 
 rm -f /tmp/packages-microsoft-prod.deb
 
-# Configure Azure Files authentication using the VM system-assigned Managed Identity
-azfilesauthmanager set \
+# Configure Azure Files authentication using the VM system-assigned Managed Identity.
+# Azure RBAC assignments may need some time to propagate after the VM is created,
+# so retry the authentication setup before failing the bootstrap.
+
+AZFILES_MAX_ATTEMPTS=20
+AZFILES_RETRY_SECONDS=15
+AZFILES_ATTEMPT=1
+
+until azfilesauthmanager set \
   "https://${storage_account_name}.file.core.windows.net" \
   --system
+do
+  if [ "$AZFILES_ATTEMPT" -ge "$AZFILES_MAX_ATTEMPTS" ]; then
+    echo "Azure Files authentication failed after $${AZFILES_MAX_ATTEMPTS} attempts."
+    exit 1
+  fi
+
+  echo "Azure Files authentication not ready yet. Retrying in $${AZFILES_RETRY_SECONDS} seconds..."
+
+  AZFILES_ATTEMPT=$((AZFILES_ATTEMPT + 1))
+  sleep "$AZFILES_RETRY_SECONDS"
+done
 
 # Verify that the authentication ticket was created
 azfilesauthmanager list
@@ -60,14 +78,17 @@ mount -t cifs \
 # Enable automatic refresh of Managed Identity credentials
 systemctl enable --now azfilesrefresh
 
-# Configure and mount Azure Blob Storage using Managed Identity
+# Configure and mount Azure Blob Storage using Managed Identity.
+# RBAC assignments can also take some time to propagate,
+# so retry the BlobFuse2 mount before failing the bootstrap.
+
 BLOB_MOUNT="/mnt/moodle-backups"
 BLOB_CONFIG="/etc/blobfuse2-moodle.yaml"
 
 mkdir -p "$BLOB_MOUNT"
 
 cat > "$BLOB_CONFIG" <<EOF
-allow-other: true
+allow_other: true
 
 components:
   - libfuse
@@ -88,9 +109,23 @@ EOF
 
 chmod 600 "$BLOB_CONFIG"
 
-blobfuse2 mount "$BLOB_MOUNT" \
-  --config-file="$BLOB_CONFIG" \
-  --streaming
+BLOB_MAX_ATTEMPTS=20
+BLOB_RETRY_SECONDS=15
+BLOB_ATTEMPT=1
+
+until blobfuse2 mount "$BLOB_MOUNT" \
+  --config-file="$BLOB_CONFIG"
+do
+  if [ "$BLOB_ATTEMPT" -ge "$BLOB_MAX_ATTEMPTS" ]; then
+    echo "BlobFuse2 mount failed after $${BLOB_MAX_ATTEMPTS} attempts."
+    exit 1
+  fi
+
+  echo "Blob Storage access not ready yet. Retrying in $${BLOB_RETRY_SECONDS} seconds..."
+
+  BLOB_ATTEMPT=$((BLOB_ATTEMPT + 1))
+  sleep "$BLOB_RETRY_SECONDS"
+done
 
 systemctl enable apache2
 systemctl enable mariadb
@@ -187,7 +222,7 @@ a2enmod rewrite
 systemctl restart apache2
 
 # Create simple health-check endpoint for Azure Load Balancer
-cat > /var/www/html/moodle-health.html <<'HTML'
+cat > /var/www/html/moodle/moodle-health.html <<'HTML'
 <!DOCTYPE html>
 <html>
 <head>
@@ -199,4 +234,4 @@ cat > /var/www/html/moodle-health.html <<'HTML'
 </html>
 HTML
 
-chown www-data:www-data /var/www/html/moodle-health.html
+chown www-data:www-data /var/www/html/moodle/moodle-health.html

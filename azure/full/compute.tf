@@ -1,29 +1,45 @@
 resource "azurerm_network_interface" "developer" {
-  for_each = local.developers
+  for_each = local.moodle_instances
 
-  name                = "nic-${each.key}"
-  location            = azurerm_resource_group.techsprint.location
-  resource_group_name = azurerm_resource_group.techsprint.name
+  name                = "nic-${each.value.developer}-${each.value.instance_number}"
+  location            = azurerm_resource_group.developer[each.value.developer].location
+  resource_group_name = azurerm_resource_group.developer[each.value.developer].name
 
-  tags = local.common_tags
+  tags = merge(
+    local.common_tags,
+    {
+      owner    = each.value.developer
+      instance = tostring(each.value.instance_number)
+    }
+  )
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.developer[each.key].id
+    subnet_id                     = azurerm_subnet.developer[each.value.developer].id
     private_ip_address_allocation = "Dynamic"
   }
 }
 
 resource "azurerm_linux_virtual_machine" "developer" {
-  for_each = local.developers
+  for_each = local.moodle_instances
 
-  name                = "vm-${each.key}-moodle"
-  resource_group_name = azurerm_resource_group.techsprint.name
-  location            = azurerm_resource_group.techsprint.location
+  depends_on = [
+    azapi_update_resource.developer_storage_smb_oauth
+  ]
+
+  name                = "vm-${each.value.developer}-moodle-${each.value.instance_number}"
+  resource_group_name = azurerm_resource_group.developer[each.value.developer].name
+  location            = azurerm_resource_group.developer[each.value.developer].location
   size                = var.vm_size
   admin_username      = var.admin_username
 
-  tags = local.common_tags
+  tags = merge(
+    local.common_tags,
+    {
+      owner    = each.value.developer
+      instance = tostring(each.value.instance_number)
+    }
+  )
 
   identity {
     type = "SystemAssigned"
@@ -32,10 +48,10 @@ resource "azurerm_linux_virtual_machine" "developer" {
   custom_data = base64encode(
     templatefile("${path.module}/scripts/moodle-bootstrap.sh", {
       moodle_db_password   = var.moodle_db_password
-      storage_account_name = azurerm_storage_account.developer[each.key].name
-      blob_container_name  = azurerm_storage_container.developer_backups[each.key].name
-      file_share_name      = azurerm_storage_share.developer_shared[each.key].name
-      moodle_url           = "http://${azurerm_lb.developer[each.key].private_ip_address}"
+      storage_account_name = azurerm_storage_account.developer[each.value.developer].name
+      blob_container_name  = azurerm_storage_container.developer_backups[each.value.developer].name
+      file_share_name      = azurerm_storage_share.developer_shared[each.value.developer].name
+      moodle_url           = "http://${azurerm_lb.developer[each.value.developer].private_ip_address}"
     })
   )
 
@@ -85,7 +101,6 @@ resource "azurerm_network_interface" "jump" {
     subnet_id                     = azurerm_subnet.management.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.jump.id
-
   }
 }
 
@@ -107,7 +122,6 @@ resource "azurerm_linux_virtual_machine" "jump" {
   admin_ssh_key {
     username   = var.admin_username
     public_key = file(pathexpand(var.ssh_public_key_path))
-
   }
 
   os_disk {

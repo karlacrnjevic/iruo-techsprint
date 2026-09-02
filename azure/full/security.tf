@@ -2,10 +2,15 @@ resource "azurerm_network_security_group" "developer" {
   for_each = local.developers
 
   name                = "nsg-${each.key}"
-  location            = azurerm_resource_group.techsprint.location
-  resource_group_name = azurerm_resource_group.techsprint.name
+  location            = azurerm_resource_group.developer[each.key].location
+  resource_group_name = azurerm_resource_group.developer[each.key].name
 
-  tags = local.common_tags
+  tags = merge(
+    local.common_tags,
+    {
+      owner = each.key
+    }
+  )
 
   security_rule {
     name                   = "Allow-SSH-From-Management"
@@ -16,6 +21,7 @@ resource "azurerm_network_security_group" "developer" {
     source_port_range      = "*"
     destination_port_range = "22"
     source_address_prefix  = local.management_subnet
+
     destination_application_security_group_ids = [
       azurerm_application_security_group.developer[each.key].id
     ]

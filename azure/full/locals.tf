@@ -23,6 +23,16 @@ locals {
     username => cidrsubnet(cidr, 4, 0)
   }
 
+  moodle_instances = merge([
+    for username in sort(keys(local.developers)) : {
+      for instance_number in [1, 2] :
+      "${username}-${instance_number}" => {
+        developer       = username
+        instance_number = instance_number
+      }
+    }
+  ]...)
+
   management_vnet   = "10.10.100.0/24"
   management_subnet = "10.10.100.0/25"
 

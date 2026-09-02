@@ -2,8 +2,8 @@ resource "azurerm_lb" "developer" {
   for_each = local.developers
 
   name                = "lb-${each.key}-internal"
-  location            = azurerm_resource_group.techsprint.location
-  resource_group_name = azurerm_resource_group.techsprint.name
+  location            = azurerm_resource_group.developer[each.key].location
+  resource_group_name = azurerm_resource_group.developer[each.key].name
   sku                 = "Standard"
 
   frontend_ip_configuration {
@@ -12,7 +12,12 @@ resource "azurerm_lb" "developer" {
     private_ip_address_allocation = "Dynamic"
   }
 
-  tags = local.common_tags
+  tags = merge(
+    local.common_tags,
+    {
+      owner = each.key
+    }
+  )
 }
 
 resource "azurerm_lb_backend_address_pool" "developer" {
@@ -23,11 +28,14 @@ resource "azurerm_lb_backend_address_pool" "developer" {
 }
 
 resource "azurerm_network_interface_backend_address_pool_association" "developer" {
-  for_each = local.developers
+  for_each = local.moodle_instances
 
-  network_interface_id    = azurerm_network_interface.developer[each.key].id
-  ip_configuration_name   = "internal"
-  backend_address_pool_id = azurerm_lb_backend_address_pool.developer[each.key].id
+  network_interface_id  = azurerm_network_interface.developer[each.key].id
+  ip_configuration_name = "internal"
+
+  backend_address_pool_id = azurerm_lb_backend_address_pool.developer[
+    each.value.developer
+  ].id
 }
 
 resource "azurerm_lb_probe" "developer_http" {
@@ -51,8 +59,10 @@ resource "azurerm_lb_rule" "developer_http" {
   frontend_port                  = 80
   backend_port                   = 80
   frontend_ip_configuration_name = "internal-frontend"
+
   backend_address_pool_ids = [
     azurerm_lb_backend_address_pool.developer[each.key].id
   ]
+
   probe_id = azurerm_lb_probe.developer_http[each.key].id
 }

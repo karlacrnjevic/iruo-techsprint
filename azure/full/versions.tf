@@ -6,17 +6,22 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
     }
+
+    azapi = {
+      source  = "Azure/azapi"
+      version = "~> 2.0"
+    }
   }
 }
 
-# Ovaj fajl Terraformu govori koja minimalna Terraform verzija smije izvršavati projekt i koji provider projekt treba
-
-# azurerm je provider preko kojeg Terraform komunicira s Azureom:
+# Ovaj fajl Terraformu govori koja minimalna Terraform verzija smije izvršavati projekt
+# i koje providere projekt treba.
 
 # Terraform CLI
 #    |
-# azurerm provider
-#    |
-# Azure API
-#    |
-# Azure resursi
+#    ├── azurerm provider
+#    └── azapi provider
+#           |
+#        Azure API
+#           |
+#      Azure resursi
