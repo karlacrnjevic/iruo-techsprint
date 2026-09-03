@@ -12,3 +12,5 @@ Cilj projekta je automatizirana implementacija izoliranih testnih okolina za Moo
 - OpenStack
 - Git
 - GitHub
+
+  ![Uploading TechSprint – Azure Infrastructure Architecture.drawio.png…]()
