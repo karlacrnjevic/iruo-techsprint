@@ -13,7 +13,7 @@ Cilj projekta je automatizirana implementacija izoliranih testnih okolina za Moo
 - Git
 - GitHub
 
-Azure Network and Security
+Azure Architecture
 
 ![TechSprint Azure Architecture](diagrams/azure-architecture.png)
 
