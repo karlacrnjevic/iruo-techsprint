@@ -17,4 +17,4 @@ Azure Network and Security
 
 ![TechSprint Azure Architecture](diagrams/azure-architecture.png)
 
-The diagram presents the overall Azure infrastructure architecture of the TechSprint environment. A central Jump Host provides administrative access to two isolated developer environments through VNet peering. Each developer environment contains two Moodle virtual machines behind an Internal Load Balancer, dedicated managed data disks, and a separate Storage Account for backups and shared files. Only the Jump Host is publicly accessible, while the Moodle instances remain on private networks.
+Dijagram prikazuje cjelokupnu arhitekturu Azure infrastrukture za TechSprint okruženje. Centralni Jump Host omogućuje administrativni pristup dvama međusobno izoliranim developerskim okruženjima putem VNet peeringa. Svako developersko okruženje sadrži dvije Moodle virtualne instance iza internog Load Balancera, zasebne Managed Data diskove te vlastiti Storage Account za sigurnosne kopije i dijeljene datoteke. Javno je dostupan isključivo Jump Host, dok Moodle instance ostaju unutar privatnih mreža.
