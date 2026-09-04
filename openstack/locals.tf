@@ -19,4 +19,6 @@ locals {
     for index, username in local.developer_usernames :
     username => cidrsubnet("10.10.0.0/16", 8, index + 1)
   }
+
+    management_network = "10.10.100.0/24"
 }

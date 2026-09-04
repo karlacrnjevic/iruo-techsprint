@@ -36,3 +36,30 @@ resource "openstack_networking_router_interface_v2" "developer" {
   router_id = openstack_networking_router_v2.developer[each.key].id
   subnet_id = openstack_networking_subnet_v2.developer[each.key].id
 }
+
+resource "openstack_networking_network_v2" "management" {
+  name           = "techsprint-management-network"
+  admin_state_up = true
+}
+
+resource "openstack_networking_subnet_v2" "management" {
+  name       = "techsprint-management-subnet"
+  network_id = openstack_networking_network_v2.management.id
+  cidr       = local.management_network
+  ip_version = 4
+
+  dns_nameservers = [
+    "8.8.8.8"
+  ]
+}
+
+resource "openstack_networking_router_v2" "management" {
+  name                = "techsprint-management-router"
+  admin_state_up      = true
+  external_network_id = data.openstack_networking_network_v2.external.id
+}
+
+resource "openstack_networking_router_interface_v2" "management" {
+  router_id = openstack_networking_router_v2.management.id
+  subnet_id = openstack_networking_subnet_v2.management.id
+}
