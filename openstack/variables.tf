@@ -27,3 +27,9 @@ variable "users_csv_path" {
   type        = string
   default     = "../data/users.csv"
 }
+
+variable "ssh_public_key_path" {
+  description = "Path to the SSH public key used for TechSprint instances"
+  type        = string
+  default     = "~/.ssh/techsprint.pub"
+}
