@@ -1,3 +1,7 @@
+data "openstack_networking_network_v2" "external" {
+  name = var.external_network_name
+}
+
 resource "openstack_networking_network_v2" "developer" {
   for_each = local.developers
 
@@ -16,4 +20,19 @@ resource "openstack_networking_subnet_v2" "developer" {
   dns_nameservers = [
     "8.8.8.8"
   ]
+}
+
+resource "openstack_networking_router_v2" "developer" {
+  for_each = local.developers
+
+  name                = "techsprint-${each.key}-router"
+  admin_state_up      = true
+  external_network_id = data.openstack_networking_network_v2.external.id
+}
+
+resource "openstack_networking_router_interface_v2" "developer" {
+  for_each = local.developers
+
+  router_id = openstack_networking_router_v2.developer[each.key].id
+  subnet_id = openstack_networking_subnet_v2.developer[each.key].id
 }
