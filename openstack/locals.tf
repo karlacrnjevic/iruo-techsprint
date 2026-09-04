@@ -21,4 +21,14 @@ locals {
   }
 
     management_network = "10.10.100.0/24"
+
+      moodle_instances = merge([
+    for username, user in local.developers : {
+      for instance_number in range(1, 3) :
+      "${username}-${instance_number}" => {
+        username        = username
+        instance_number = instance_number
+      }
+    }
+  ]...)
 }
