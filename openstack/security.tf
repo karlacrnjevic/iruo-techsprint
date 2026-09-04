@@ -12,9 +12,3 @@ resource "openstack_networking_secgroup_rule_v2" "jump_ssh" {
   remote_ip_prefix  = "0.0.0.0/0"
   security_group_id = openstack_networking_secgroup_v2.jump.id
 }
-
-resource "openstack_networking_secgroup_rule_v2" "jump_egress_ipv4" {
-  direction         = "egress"
-  ethertype         = "IPv4"
-  security_group_id = openstack_networking_secgroup_v2.jump.id
-}
