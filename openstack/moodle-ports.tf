@@ -12,4 +12,12 @@ resource "openstack_networking_port_v2" "moodle" {
   security_group_ids = [
     openstack_networking_secgroup_v2.moodle[each.value.username].id
   ]
+
+  tags = [
+    "project:techsprint",
+    "environment:testing",
+    "owner:${each.value.username}",
+    "role:moodle",
+    "instance:${each.value.instance_number}"
+  ]
 }
