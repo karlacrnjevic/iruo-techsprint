@@ -1,0 +1,125 @@
+---
+- name: Configure Moodle application servers
+  hosts: moodle
+  become: true
+
+  vars:
+    data_disk: /dev/vdb
+    data_mount_point: /data
+    moodle_web_root: /var/www/html/moodle
+    moodle_data_dir: /data/moodledata
+
+  tasks:
+    - name: Install required packages
+      ansible.builtin.dnf:
+        name:
+          - httpd
+          - mariadb-server
+          - php
+          - php-cli
+          - php-common
+          - php-mysqlnd
+          - php-gd
+          - php-xml
+          - php-mbstring
+          - php-intl
+          - git
+          - curl
+          - xfsprogs
+          - firewalld
+        state: present
+
+    - name: Enable and start Apache
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Enable and start MariaDB
+      ansible.builtin.service:
+        name: mariadb
+        state: started
+        enabled: true
+
+    - name: Enable and start firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: started
+        enabled: true
+
+    - name: Wait for attached data disk
+      ansible.builtin.wait_for:
+        path: "{{ data_disk }}"
+        timeout: 60
+
+    - name: Check whether data disk already has a filesystem
+      ansible.builtin.command:
+        cmd: "blkid {{ data_disk }}"
+      register: data_disk_blkid
+      changed_when: false
+      failed_when: false
+
+    - name: Create XFS filesystem on data disk
+      community.general.filesystem:
+        fstype: xfs
+        dev: "{{ data_disk }}"
+      when: data_disk_blkid.rc != 0
+
+    - name: Create data mount point
+      ansible.builtin.file:
+        path: "{{ data_mount_point }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Mount data disk
+      ansible.posix.mount:
+        path: "{{ data_mount_point }}"
+        src: "{{ data_disk }}"
+        fstype: xfs
+        opts: defaults
+        state: mounted
+
+    - name: Create Moodle data directory
+      ansible.builtin.file:
+        path: "{{ moodle_data_dir }}"
+        state: directory
+        owner: apache
+        group: apache
+        mode: "0770"
+
+    - name: Create Moodle web root
+      ansible.builtin.file:
+        path: "{{ moodle_web_root }}"
+        state: directory
+        owner: apache
+        group: apache
+        mode: "0755"
+
+    - name: Create Moodle placeholder page
+      ansible.builtin.copy:
+        dest: "{{ moodle_web_root }}/index.php"
+        owner: apache
+        group: apache
+        mode: "0644"
+        content: |
+          <?php
+          echo "TechSprint Moodle node: " . gethostname();
+          ?>
+
+    - name: Create load balancer health check endpoint
+      ansible.builtin.copy:
+        dest: /var/www/html/moodle-health.html
+        owner: apache
+        group: apache
+        mode: "0644"
+        content: |
+          OK
+
+    - name: Allow HTTP through firewalld
+      ansible.posix.firewalld:
+        service: http
+        permanent: true
+        immediate: true
+        state: enabled
