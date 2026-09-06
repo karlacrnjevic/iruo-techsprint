@@ -1,0 +1,307 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="7hcp8vQ8TcvBc-wWl2CN">
+    <mxGraphModel dx="1814" dy="1060" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-67" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);opacity=20;" value="" vertex="1">
+          <mxGeometry height="215" width="330" x="540" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-3" edge="1" parent="1" source="ipWtsY5MDjbOk-n_v65l-1" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" target="ipWtsY5MDjbOk-n_v65l-2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-4" connectable="0" parent="ipWtsY5MDjbOk-n_v65l-3" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" value="Floating IP" vertex="1">
+          <mxGeometry relative="1" x="-0.0433" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);" value="EXTERNAL NETWORK&lt;div&gt;provider-datacentre&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="160" x="310" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-2" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);rounded=0;opacity=40;" value="JUMP HOST&lt;div&gt;RHEL 9&lt;/div&gt;&lt;div&gt;Only public entry point&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="160" x="310" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-7" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="389.8" y="410" as="sourcePoint" />
+            <mxPoint x="389.8" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-8" connectable="0" parent="ipWtsY5MDjbOk-n_v65l-7" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" value="Management Network&lt;div&gt;10.10.100.0 /24&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.0267" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-9" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="260" y="410" as="sourcePoint" />
+            <mxPoint x="530" y="410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);opacity=50;" value="" vertex="1">
+          <mxGeometry height="680" width="210" x="170" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-13" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=16;" value="DEV1 ENVIRONMENT" vertex="1">
+          <mxGeometry height="30" width="200" x="175" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-14" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=16;" value="Network&lt;br&gt;&lt;div&gt;10.10.1.0 /24&lt;/div&gt;" vertex="1">
+          <mxGeometry height="20" width="110" x="175" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-15" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=16;" value="Subnet&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Security Group&lt;/div&gt;" vertex="1">
+          <mxGeometry height="90" width="130" x="175" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-16" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=16;" value="Private Octavia LB&lt;div&gt;HTTP :80&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="180" x="185" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-17" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="274.76" y="730" as="sourcePoint" />
+            <mxPoint x="274.76" y="710" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-18" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="224.76" y="730" as="sourcePoint" />
+            <mxPoint x="324.76" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-19" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="224.76" y="750" as="sourcePoint" />
+            <mxPoint x="224.76" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-20" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="324.76" y="750" as="sourcePoint" />
+            <mxPoint x="324.76" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-21" edge="1" parent="1" source="ipWtsY5MDjbOk-n_v65l-10" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;exitX=0.429;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="260" y="430" as="sourcePoint" />
+            <mxPoint x="260" y="410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-22" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;exitX=0.429;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="440" as="sourcePoint" />
+            <mxPoint x="530" y="410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-23" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);rounded=0;" value="Moodle-1&lt;div&gt;RHEL 9&lt;/div&gt;&lt;div&gt;2 vCPU&lt;/div&gt;&lt;div&gt;2 GB RAM&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="72.5" x="187.5" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-24" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);rounded=0;" value="Moodle-2&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;RHEL 9&lt;/span&gt;&lt;div&gt;2 vCPU&lt;/div&gt;&lt;div&gt;2 GB RAM&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="72.5" x="285" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-25" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);rounded=0;" value="Cinder&lt;div&gt;Data&lt;/div&gt;&lt;div&gt;10 GB&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="56.25" x="195.63" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-26" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);rounded=0;" value="Cinder&lt;div&gt;Data&lt;/div&gt;&lt;div&gt;10 GB&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="56.25" x="293.13" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-27" edge="1" parent="1" source="ipWtsY5MDjbOk-n_v65l-25" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="223.55" y="850" as="sourcePoint" />
+            <mxPoint x="223.55" y="830" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-28" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="321.48" y="860" as="sourcePoint" />
+            <mxPoint x="321.03" y="830" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-29" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=16;" value="Moodle-1 exports NFS&lt;div&gt;/data/shared&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="210" x="175" y="940" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-30" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=16;" value="Moodle-2 mounts NFS" vertex="1">
+          <mxGeometry height="30" width="210" x="155" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-31" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);rounded=0;" value="Swift Backup Container techsprint-dev1-..." vertex="1">
+          <mxGeometry height="40" width="145.62" x="185" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-32" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="200" y="1000" as="sourcePoint" />
+            <mxPoint x="200" y="980" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-33" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="200" y="1050" as="sourcePoint" />
+            <mxPoint x="200" y="1030" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-34" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);opacity=50;" value="" vertex="1">
+          <mxGeometry height="680" width="210" x="415" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-35" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=16;" value="DEV2 ENVIRONMENT" vertex="1">
+          <mxGeometry height="30" width="200" x="420" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-36" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=16;" value="Network&lt;br&gt;&lt;div&gt;10.10.2.0 /24&lt;/div&gt;" vertex="1">
+          <mxGeometry height="20" width="110" x="420" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-37" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=16;" value="Subnet&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Security Group&lt;/div&gt;" vertex="1">
+          <mxGeometry height="90" width="130" x="420" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-38" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=16;" value="Private Octavia LB&lt;div&gt;HTTP :80&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="180" x="430" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-39" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="519.76" y="730" as="sourcePoint" />
+            <mxPoint x="519.76" y="710" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-40" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="469.76" y="730" as="sourcePoint" />
+            <mxPoint x="569.76" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-41" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="469.76" y="750" as="sourcePoint" />
+            <mxPoint x="469.76" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-42" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="569.76" y="750" as="sourcePoint" />
+            <mxPoint x="569.76" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-43" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);rounded=0;" value="Moodle-1&lt;div&gt;RHEL 9&lt;/div&gt;&lt;div&gt;2 vCPU&lt;/div&gt;&lt;div&gt;2 GB RAM&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="72.5" x="432.5" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-44" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);rounded=0;" value="Moodle-2&lt;div&gt;RHEL 9&lt;/div&gt;&lt;div&gt;2 vCPU&lt;/div&gt;&lt;div&gt;2 GB RAM&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="72.5" x="530" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-45" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);rounded=0;" value="Cinder&lt;div&gt;Data&lt;/div&gt;&lt;div&gt;10 GB&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="56.25" x="440.63" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-46" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);rounded=0;" value="Cinder&lt;div&gt;Data&lt;/div&gt;&lt;div&gt;10 GB&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="56.25" x="538.13" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-47" edge="1" parent="1" source="ipWtsY5MDjbOk-n_v65l-45" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="468.54999999999995" y="850" as="sourcePoint" />
+            <mxPoint x="468.54999999999995" y="830" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-48" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="566.48" y="860" as="sourcePoint" />
+            <mxPoint x="566.03" y="830" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-49" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=16;" value="Moodle-1 exports NFS&lt;div&gt;/data/shared&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="210" x="420" y="940" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-50" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=16;" value="Moodle-2 mounts NFS" vertex="1">
+          <mxGeometry height="30" width="210" x="400" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-51" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);rounded=0;" value="Swift Backup Container techsprint-dev2-..." vertex="1">
+          <mxGeometry height="40" width="145.62" x="430" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-52" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="445" y="1000" as="sourcePoint" />
+            <mxPoint x="445" y="980" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-53" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="445" y="1050" as="sourcePoint" />
+            <mxPoint x="445" y="1030" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-54" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=16;" value="X&lt;br&gt;NO DIRECT DEV1&amp;lt;&amp;gt;DEV2&lt;div&gt;CONNECTIVITY&lt;/div&gt;" vertex="1">
+          <mxGeometry height="150" width="230" x="285" y="1070" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-55" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=16;" value="JUMP HOST NETWORK CONNECTIVITY" vertex="1">
+          <mxGeometry height="30" width="310" x="550" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-56" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="699.38" y="235" as="sourcePoint" />
+            <mxPoint x="699.38" y="185" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-68" connectable="0" parent="ipWtsY5MDjbOk-n_v65l-56" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" value="&lt;span style=&quot;color: light-dark(rgb(255, 255, 255), rgb(255, 255, 255));&quot;&gt;Management Network&lt;/span&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.0667" y="3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-58" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="620" y="235" as="sourcePoint" />
+            <mxPoint x="790" y="235" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-59" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;exitX=0.429;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="619.58" y="265" as="sourcePoint" />
+            <mxPoint x="619.58" y="235" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-60" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;exitX=0.429;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="790" y="265" as="sourcePoint" />
+            <mxPoint x="790" y="235" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-62" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);rounded=0;opacity=70;" value="NIC to dev1" vertex="1">
+          <mxGeometry height="30" width="110" x="560" y="265" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-63" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);rounded=0;opacity=70;" value="NIC to dev2" vertex="1">
+          <mxGeometry height="30" width="110" x="737" y="265" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-64" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);rounded=0;opacity=70;" value="dev1 Network" vertex="1">
+          <mxGeometry height="30" width="110" x="560" y="315" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-65" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#9AC7BF);strokeColor=light-dark(#000000,#67AB9F);rounded=0;opacity=70;" value="dev2 Network" vertex="1">
+          <mxGeometry height="30" width="110" x="737" y="315" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-69" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;strokeColor=#9AC7BF;fillColor=#9AC7BF;opacity=70;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;OPENSTACK IAM / RBAC&amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;Intended production design:&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;nbsp;1 OpenStack Project per developer&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp;Developer&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;nbsp;→ member of own project only&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;nbsp;→ start / stop / reboot own VMs&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;nbsp;DevOps Lead&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;nbsp;→ role across all developer projects&amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;nbsp;Academy limitation:&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;nbsp;student cannot create Keystone&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;nbsp;projects/users/groups/roles (HTTP 403)&amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;nbsp;Runtime resources use provided&amp;nbsp;&amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;nbsp;&quot;finance&quot; project&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="290" width="220" x="850" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-72" edge="1" parent="1" source="ipWtsY5MDjbOk-n_v65l-70" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;entryX=0.5;entryY=0;entryDx=0;entryDy=0;opacity=70;" target="ipWtsY5MDjbOk-n_v65l-81" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-70" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#47746C,#47746C);strokeColor=light-dark(#9AC7BF,#67AB9F);opacity=80;" value="data/users.csv" vertex="1">
+          <mxGeometry height="40" width="120" x="690" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-71" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#47746C,#47746C);strokeColor=light-dark(#9AC7BF,#67AB9F);rounded=0;opacity=80;" value="Terraform&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;CSV-driven IaC&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;for_each&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="140" x="680" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-73" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#47746C,#47746C);strokeColor=light-dark(#9AC7BF,#67AB9F);rounded=0;opacity=80;" value="OpenStack Infrastructure&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;Neutron&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;Nova&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;Ciner&lt;/div&gt;&lt;div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Swift&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Octavia&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="130" width="160" x="670" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-76" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#47746C,#47746C);strokeColor=light-dark(#9AC7BF,#67AB9F);rounded=0;opacity=80;" value="Terraform outputs" vertex="1">
+          <mxGeometry height="40" width="120" x="690" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-78" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#47746C,#47746C);strokeColor=light-dark(#9AC7BF,#67AB9F);rounded=0;opacity=80;" value="Python Inventory Generator" vertex="1">
+          <mxGeometry height="40" width="200" x="650" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-81" parent="1" style="whiteSpace=wrap;html=1;fillColor=light-dark(#47746C,#47746C);strokeColor=light-dark(#9AC7BF,#67AB9F);rounded=0;opacity=80;" value="Ansible&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;Moodle&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;Apache&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;MariaDB&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;NFS&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="85" x="707.5" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-83" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;strokeColor=#9AC7BF;fillColor=#9AC7BF;opacity=70;" value="&lt;span style=&quot;color: rgba(0, 0, 0, 0); font-family: monospace; font-size: 0px; white-space: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20parent%3D%221%22%20style%3D%22rounded%3D0%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3Balign%3Dleft%3BstrokeColor%3D%239AC7BF%3BfillColor%3D%239AC7BF%3Bopacity%3D70%3B%22%20value%3D%22%26lt%3Bdiv%26gt%3B%26lt%3Bspan%20style%3D%26quot%3Bbackground-color%3A%20transparent%3B%20color%3A%20light-dark(rgb(0%2C%200%2C%200)%2C%20rgb(255%2C%20255%2C%20255))%3B%26quot%3B%26gt%3BOPENSTACK%20IAM%20%2F%20RBAC%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26amp%3Bnbsp%3B%26lt%3B%2Fspan%26gt%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26lt%3Bspan%20style%3D%26quot%3Bbackground-color%3A%20transparent%3B%20color%3A%20light-dark(rgb(0%2C%200%2C%200)%2C%20rgb(255%2C%20255%2C%20255))%3B%26quot%3B%26gt%3B%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26lt%3B%2Fspan%26gt%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26lt%3Bspan%20style%3D%26quot%3Bbackground-color%3A%20transparent%3B%20color%3A%20light-dark(rgb(0%2C%200%2C%200)%2C%20rgb(255%2C%20255%2C%20255))%3B%26quot%3B%26gt%3B%26amp%3Bnbsp%3BIntended%20production%20design%3A%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26amp%3Bnbsp%3B%26lt%3B%2Fspan%26gt%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26amp%3Bnbsp%3B1%20OpenStack%20Project%20per%20developer%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26amp%3Bnbsp%3B%26lt%3Bspan%20style%3D%26quot%3Bbackground-color%3A%20transparent%3B%20color%3A%20light-dark(rgb(0%2C%200%2C%200)%2C%20rgb(255%2C%20255%2C%20255))%3B%26quot%3B%26gt%3B%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26amp%3Bnbsp%3B%26lt%3B%2Fspan%26gt%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26amp%3Bnbsp%3BDeveloper%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26amp%3Bnbsp%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26amp%3Bnbsp%3B%E2%86%92%20member%20of%20own%20project%20only%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26amp%3Bnbsp%3B%E2%86%92%20start%20%2F%20stop%20%2F%20reboot%20own%20VMs%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26amp%3Bnbsp%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26amp%3Bnbsp%3BDevOps%20Lead%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26amp%3Bnbsp%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26amp%3Bnbsp%3B%E2%86%92%20role%20across%20all%20developer%20projects%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26amp%3Bnbsp%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26amp%3Bnbsp%3BAcademy%20limitation%3A%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26amp%3Bnbsp%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26amp%3Bnbsp%3Bstudent%20cannot%20create%20Keystone%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26amp%3Bnbsp%3Bprojects%2Fusers%2Fgroups%2Froles%20(HTTP%20403)%26amp%3Bnbsp%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26amp%3Bnbsp%3BRuntime%20resources%20use%20provided%26amp%3Bnbsp%3B%26amp%3Bnbsp%3B%26lt%3B%2Fdiv%26gt%3B%26lt%3Bdiv%26gt%3B%26amp%3Bnbsp%3B%26quot%3Bfinance%26quot%3B%20project%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3B%26amp%3Bnbsp%3B%26lt%3B%2Fdiv%26gt%3B%22%20vertex%3D%221%22%3E%3CmxGeometry%20height%3D%22290%22%20width%3D%22220%22%20x%3D%22850%22%20y%3D%22400%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" vertex="1">
+          <mxGeometry height="340" width="370" x="820" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-85" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=16;" value="ARCHITECTURE NOTES&lt;br&gt;&lt;br&gt;✓ 2 Moodle VMs per developer&lt;br&gt;✓ Isolated Neutron network per developer&lt;br&gt;✓ No direct dev1 ↔ dev2 connectivity&lt;br&gt;✓ Only Jump Host has Floating IP&lt;br&gt;✓ Jump Host connected to each dev network&lt;br&gt;✓ Private Octavia Load Balancer per developer&lt;br&gt;✓ OS disk + dedicated 10 GB Cinder data&amp;nbsp;&lt;div&gt;disk per VM&lt;br&gt;✓ Swift container for backups&lt;br&gt;✓ NFS shared storage per developer&lt;br&gt;✓ Security Group per developer&lt;br&gt;✓ Static private Moodle IP addresses&lt;br&gt;✓ Infrastructure generated from CSV&lt;br&gt;✓ Terraform + Ansible automation&lt;br&gt;✓ Resource tags / metadata&lt;/div&gt;" vertex="1">
+          <mxGeometry height="340" width="353" x="837" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="ipWtsY5MDjbOk-n_v65l-86" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;entryX=-0.008;entryY=0.836;entryDx=0;entryDy=0;entryPerimeter=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="472.64" y="330.09" as="sourcePoint" />
+            <mxPoint x="539.9999999999999" y="329.83" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
