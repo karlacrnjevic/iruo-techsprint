@@ -23,6 +23,16 @@ if [ ! -f "${CSV_PATH}" ]; then
     exit 1
 fi
 
+if [ -z "${MOODLE_DB_PASSWORD:-}" ]; then
+    echo "ERROR: MOODLE_DB_PASSWORD environment variable is not set."
+    exit 1
+fi
+
+if [ -z "${MOODLE_ADMIN_PASSWORD:-}" ]; then
+    echo "ERROR: MOODLE_ADMIN_PASSWORD environment variable is not set."
+    exit 1
+fi
+
 CSV_PATH="$(realpath "${CSV_PATH}")"
 
 echo "=========================================="

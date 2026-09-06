@@ -9,6 +9,26 @@
     moodle_web_root: /var/www/html/moodle
     moodle_data_dir: /data/moodledata
 
+    moodle_version: MOODLE_401_STABLE
+    moodle_db_name: moodle
+    moodle_db_user: moodle
+
+    moodle_db_password: "{{ lookup('env', 'MOODLE_DB_PASSWORD') }}"
+    moodle_admin_password: "{{ lookup('env', 'MOODLE_ADMIN_PASSWORD') }}"
+
+  pre_tasks:
+    - name: Verify Moodle database password is provided
+      ansible.builtin.assert:
+        that:
+          - moodle_db_password | length > 0
+        fail_msg: "MOODLE_DB_PASSWORD environment variable is required."
+
+    - name: Verify Moodle admin password is provided
+      ansible.builtin.assert:
+        that:
+          - moodle_admin_password | length > 0
+        fail_msg: "MOODLE_ADMIN_PASSWORD environment variable is required."
+
   tasks:
     - name: Install required packages
       ansible.builtin.dnf:
@@ -23,10 +43,13 @@
           - php-xml
           - php-mbstring
           - php-intl
+          - php-json
+          - php-opcache
           - git
           - curl
           - xfsprogs
           - firewalld
+          - python3-PyMySQL
         state: present
 
     - name: Enable and start Apache
@@ -89,24 +112,66 @@
         group: apache
         mode: "0770"
 
-    - name: Create Moodle web root
+    - name: Download Moodle source code
+      ansible.builtin.git:
+        repo: https://github.com/moodle/moodle.git
+        dest: "{{ moodle_web_root }}"
+        version: "{{ moodle_version }}"
+        depth: 1
+        force: false
+
+    - name: Set Moodle directory ownership
       ansible.builtin.file:
         path: "{{ moodle_web_root }}"
-        state: directory
         owner: apache
         group: apache
-        mode: "0755"
+        recurse: true
 
-    - name: Create Moodle placeholder page
-      ansible.builtin.copy:
-        dest: "{{ moodle_web_root }}/index.php"
-        owner: apache
-        group: apache
-        mode: "0644"
-        content: |
-          <?php
-          echo "TechSprint Moodle node: " . gethostname();
-          ?>
+    - name: Create Moodle database
+      community.mysql.mysql_db:
+        name: "{{ moodle_db_name }}"
+        encoding: utf8mb4
+        collation: utf8mb4_unicode_ci
+        state: present
+        login_unix_socket: /var/lib/mysql/mysql.sock
+
+    - name: Create Moodle database user
+      community.mysql.mysql_user:
+        name: "{{ moodle_db_user }}"
+        password: "{{ moodle_db_password }}"
+        priv: "{{ moodle_db_name }}.*:ALL"
+        host: localhost
+        state: present
+        login_unix_socket: /var/lib/mysql/mysql.sock
+
+    - name: Check whether Moodle is already installed
+      ansible.builtin.stat:
+        path: "{{ moodle_web_root }}/config.php"
+      register: moodle_config
+
+    - name: Install Moodle non-interactively
+      ansible.builtin.command:
+        argv:
+          - /usr/bin/php
+          - "{{ moodle_web_root }}/admin/cli/install.php"
+          - --non-interactive
+          - --agree-license
+          - --lang=en
+          - "--wwwroot=http://{{ ansible_host }}/moodle"
+          - "--dataroot={{ moodle_data_dir }}"
+          - --dbtype=mariadb
+          - --dbhost=localhost
+          - "--dbname={{ moodle_db_name }}"
+          - "--dbuser={{ moodle_db_user }}"
+          - "--dbpass={{ moodle_db_password }}"
+          - --fullname=TechSprint Moodle
+          - --shortname=TechSprint
+          - --adminuser=admin
+          - "--adminpass={{ moodle_admin_password }}"
+          - --adminemail=admin@example.local
+      become_user: apache
+      no_log: true
+      when: not moodle_config.stat.exists
 
     - name: Create load balancer health check endpoint
       ansible.builtin.copy:
