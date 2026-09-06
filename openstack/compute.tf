@@ -21,11 +21,14 @@ resource "openstack_compute_instance_v2" "moodle" {
   flavor_name = var.flavor_name
   key_pair    = openstack_compute_keypair_v2.techsprint.name
 
-  security_groups = [
-    openstack_networking_secgroup_v2.moodle[each.value.username].name
-  ]
-
   network {
-    uuid = openstack_networking_network_v2.developer[each.value.username].id
+    port = openstack_networking_port_v2.moodle[each.key].id
   }
+
+  user_data = <<-EOF
+    #cloud-config
+    runcmd:
+      - nmcli con mod "System eth0" ipv4.method manual ipv4.addresses ${each.value.fixed_ip}/24 ipv4.gateway ${each.value.gateway_ip} ipv4.dns "8.8.8.8"
+      - nmcli con up "System eth0"
+  EOF
 }

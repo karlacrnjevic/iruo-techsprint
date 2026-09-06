@@ -20,14 +20,16 @@ locals {
     username => cidrsubnet("10.10.0.0/16", 8, index + 1)
   }
 
-    management_network = "10.10.100.0/24"
+  management_network = "10.10.100.0/24"
 
-      moodle_instances = merge([
+  moodle_instances = merge([
     for username, user in local.developers : {
       for instance_number in range(1, 3) :
       "${username}-${instance_number}" => {
         username        = username
         instance_number = instance_number
+        fixed_ip        = cidrhost(local.developer_networks[username], 10 + instance_number)
+        gateway_ip      = cidrhost(local.developer_networks[username], 1)
       }
     }
   ]...)
