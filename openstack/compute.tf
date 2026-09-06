@@ -8,6 +8,12 @@ resource "openstack_compute_instance_v2" "jump" {
     openstack_networking_secgroup_v2.jump.name
   ]
 
+  metadata = {
+  project     = "techsprint"
+  environment = "testing"
+  role        = "jump-host"
+  }
+
   network {
     uuid = openstack_networking_network_v2.management.id
   }
@@ -20,6 +26,13 @@ resource "openstack_compute_instance_v2" "moodle" {
   image_name  = var.image_name
   flavor_name = var.flavor_name
   key_pair    = openstack_compute_keypair_v2.techsprint.name
+
+  metadata = {
+    project     = "techsprint"
+    environment = "testing"
+    role        = "moodle"
+    owner       = each.value.username
+  }
 
   network {
     port = openstack_networking_port_v2.moodle[each.key].id
