@@ -565,6 +565,111 @@ Detalji se nalaze u:
 
 ---
 
+# Usporedba Azure i OpenStack rješenja
+
+Projekt implementira istu osnovnu TechSprint arhitekturu na Microsoft Azure i OpenStack platformama. Iako obje platforme omogućuju implementaciju istih osnovnih cloud koncepata, koriste različite servise i modele upravljanja.
+
+| Funkcionalnost | Microsoft Azure | OpenStack |
+|---|---|---|
+| Compute | Azure Virtual Machines | Nova |
+| Virtualna mreža | Azure Virtual Network (VNet) | Neutron Network |
+| Subnet | Azure Subnet | Neutron Subnet |
+| Routing | VNet routing / VNet Peering | Neutron Router |
+| Javni pristup | Azure Public IP | Neutron Floating IP |
+| Load balancing | Azure Standard Load Balancer | Octavia Load Balancer |
+| Block storage | Azure Managed Disks | Cinder Volumes |
+| Object storage | Azure Blob Storage | Swift Object Storage |
+| File storage | Azure Files | Manila / NFS fallback |
+| Identity | Microsoft Entra ID | Keystone |
+| Autorizacija | Azure RBAC | Keystone Roles / Policies |
+| Sigurnost mreže | NSG + ASG | Neutron Security Groups |
+| IaC provider | Terraform AzureRM / AzAPI | Terraform OpenStack Provider |
+| Administrativni pristup | Jump Host | Jump Host |
+
+## Compute
+
+Na Azure platformi aplikacijske instance implementirane su pomoću **Azure Virtual Machines**, dok OpenStack koristi **Nova** servis.
+
+Azure implementacija koristi `Standard_B2s` virtualne mašine s 2 vCPU i 4 GB RAM-a, što odgovara zahtjevima projekta.
+
+U Red Hat Academy OpenStack okruženju koristi se `default` flavor s 2 vCPU i 2 GB RAM-a jer flavor s traženih 4 GB RAM-a nije dostupan korisniku laboratorija.
+
+## Mreže
+
+Azure koristi **Virtual Networks (VNet)** i VNet Peering, dok OpenStack koristi **Neutron Networks, Subnets i Routers**.
+
+Na obje platforme svaki developer dobiva zasebnu izoliranu mrežu.
+
+Javni pristup omogućen je isključivo Jump Hostu:
+
+- Azure koristi Public IP
+- OpenStack koristi Floating IP
+
+Moodle instance ostaju u privatnim mrežama.
+
+## Load balancing
+
+Azure implementacija koristi **Azure Standard Load Balancer**, dok OpenStack koristi **Octavia Load Balancer**.
+
+Na obje platforme load balancer je privatan i distribuira HTTP promet između dvije Moodle instance pripadajućeg developera.
+
+Azure Load Balancer odabran je umjesto Application Gatewaya jer projekt ne zahtijeva napredne Layer 7 funkcionalnosti poput WAF-a, URL-based routinga ili TLS terminacije.
+
+## Block storage
+
+Azure koristi **Managed Disks**, dok OpenStack koristi **Cinder Volumes**.
+
+Svaka Moodle instanca ima OS disk i dodatni 10 GB data disk.
+
+Time je aplikacijski podatkovni disk odvojen od operacijskog sustava.
+
+## Object storage
+
+Azure koristi **Blob Storage**, dok OpenStack koristi **Swift Object Storage**.
+
+Object storage koristi se za pohranu podataka i sigurnosnih kopija povezanih s Moodle okruženjem.
+
+Za svakog developera predviđen je zaseban storage prostor kako bi podaci različitih razvojnih okruženja ostali odvojeni.
+
+## File storage
+
+Azure koristi managed servis **Azure Files**.
+
+OpenStack ekvivalent za shared file storage je **Manila**. Budući da dostupnost Manila servisa nije bilo moguće potvrditi u Red Hat Academy okruženju, OpenStack implementacija koristi NFS fallback na Cinder-backed data disku.
+
+U produkcijskom OpenStack okruženju prednost bi imao Manila ili drugi redundantni managed shared-storage servis.
+
+## IAM i prava pristupa
+
+Azure koristi **Microsoft Entra ID i Azure RBAC**.
+
+OpenStack koristi **Keystone** projekte, korisnike i role.
+
+Na obje platforme arhitektura je dizajnirana tako da developer upravlja samo vlastitim resursima, dok DevOps Lead ima prava upravljanja svim TechSprint okruženjima.
+
+Potpuna Keystone IAM implementacija nije mogla biti primijenjena u Red Hat Academy okruženju jer studentski korisnik nema administratorska prava za kreiranje projekata, korisnika, grupa i rola.
+
+## Infrastructure as Code
+
+Obje implementacije koriste Terraform.
+
+Azure koristi:
+
+    AzureRM
+    AzAPI
+
+OpenStack koristi:
+
+    OpenStack Terraform Provider
+
+Isti `data/users.csv` koncept koristi se kao ulaz za dinamičko generiranje developer okruženja, čime se održava isti automatizacijski pristup na obje cloud platforme.
+
+## Zaključak usporedbe
+
+Azure pruža veći broj potpuno upravljanih servisa i integrirani IAM model kroz Entra ID i Azure RBAC, dok OpenStack pruža veću kontrolu nad infrastrukturom i mogućnost implementacije u privatnom cloud okruženju.
+
+S funkcionalne strane obje platforme mogu zadovoljiti TechSprint arhitekturu. Glavna razlika je u načinu upravljanja servisima: Azure većinu komponenti pruža kao managed cloud usluge, dok OpenStack administratoru daje veću kontrolu, ali često zahtijeva više konfiguracije i održavanja.
+
 # Struktura repozitorija
 
     iruo-techsprint/
