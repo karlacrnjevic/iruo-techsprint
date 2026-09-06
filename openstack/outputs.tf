@@ -35,3 +35,12 @@ output "developer_networks" {
 
   value = local.developer_networks
 }
+
+output "moodle_load_balancer_vips" {
+  description = "Private VIP addresses of the per-developer Moodle load balancers"
+
+  value = {
+    for username, lb in openstack_lb_loadbalancer_v2.moodle :
+    username => lb.vip_address
+  }
+}
