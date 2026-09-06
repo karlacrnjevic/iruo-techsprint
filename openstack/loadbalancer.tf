@@ -33,6 +33,12 @@ resource "openstack_lb_pool_v2" "moodle" {
   protocol    = "HTTP"
   lb_method   = "ROUND_ROBIN"
   listener_id = openstack_lb_listener_v2.moodle_http[each.key].id
+
+  tags = [
+    "project:techsprint",
+    "environment:testing",
+    "owner:${each.key}"
+  ]
 }
 
 resource "openstack_lb_member_v2" "moodle" {
@@ -43,6 +49,13 @@ resource "openstack_lb_member_v2" "moodle" {
   address       = each.value.fixed_ip
   protocol_port = 80
   subnet_id     = openstack_networking_subnet_v2.developer[each.value.username].id
+
+  tags = [
+    "project:techsprint",
+    "environment:testing",
+    "owner:${each.value.username}",
+    "role:moodle"
+  ]
 }
 
 resource "openstack_lb_monitor_v2" "moodle" {
@@ -55,4 +68,11 @@ resource "openstack_lb_monitor_v2" "moodle" {
   timeout     = 5
   max_retries = 3
   url_path    = "/moodle-health.html"
+
+  tags = [
+    "project:techsprint",
+    "environment:testing",
+    "owner:${each.key}",
+    "role:health-check"
+  ]
 }

@@ -1,5 +1,11 @@
 resource "openstack_networking_floatingip_v2" "jump" {
   pool = var.external_network_name
+
+  tags = [
+    "project:techsprint",
+    "environment:testing",
+    "role:jump-host"
+  ]
 }
 
 data "openstack_networking_port_v2" "jump" {
