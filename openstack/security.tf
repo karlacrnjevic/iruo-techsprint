@@ -1,6 +1,12 @@
 resource "openstack_networking_secgroup_v2" "jump" {
   name        = "techsprint-jump-sg"
-  description = "Security group for the TechSprint Jump Host"
+  description = "Security group for TechSprint Jump Host"
+
+  tags = [
+    "project:techsprint",
+    "environment:testing",
+    "role:jump-host"
+  ]
 }
 
 resource "openstack_networking_secgroup_rule_v2" "jump_ssh" {
@@ -18,6 +24,13 @@ resource "openstack_networking_secgroup_v2" "moodle" {
 
   name        = "techsprint-${each.key}-moodle-sg"
   description = "Security group for ${each.key} Moodle servers"
+
+  tags = [
+    "project:techsprint",
+    "environment:testing",
+    "owner:${each.key}",
+    "role:moodle"
+  ]
 }
 
 resource "openstack_networking_secgroup_rule_v2" "moodle_ssh" {
