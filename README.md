@@ -2,264 +2,169 @@
 
 Projekt je izrađen u sklopu kolegija **Implementacija računarstva u oblaku (IRUO)**.
 
-Cilj projekta je automatizirati implementaciju cloud infrastrukture za razvojne timove na dvije cloud platforme:
+Cilj projekta je izraditi automatizirano cloud okruženje za razvojni tim koristeći dvije različite cloud platforme:
 
 - Microsoft Azure
 - OpenStack
 
-Infrastruktura se definira pomoću **Terraform IaC-a**, dok se konfiguracija virtualnih strojeva i Moodle aplikacije automatizira pomoću **Ansiblea**.
+Infrastruktura se definira pomoću **Terraform IaC-a**, dok se konfiguracija virtualnih strojeva automatizira pomoću **Ansiblea**.
 
-Broj razvojnih okruženja nije statički definiran. Korisnici se učitavaju iz CSV datoteke `data/users.csv`, nakon čega Terraform dinamički generira potrebnu infrastrukturu.
-
-Projektna implementacija koristi dva developera (`dev1`, `dev2`) i jednog DevOps Lead korisnika (`lead`) kao testni primjer.
+Korisnici i njihove uloge definirani su u CSV datoteci, a infrastruktura se dinamički generira na temelju tog ulaza.
 
 ---
 
 # Arhitektura projekta
 
-Projekt implementira isti osnovni koncept na dvije različite cloud platforme.
+Projekt implementira dva cloud okruženja koja koriste isti osnovni koncept:
 
-Svaki developer dobiva izolirano razvojno okruženje koje uključuje:
-
-- zasebnu mrežu
-- dvije Moodle virtualne mašine
-- privatni load balancer
+- zasebno okruženje za svakog developera
+- dvije Moodle instance po developeru
+- privatni workload
+- centralni Jump Host
+- load balancing
 - block storage
 - shared file storage
-- object storage za backup
-- sigurnosna pravila
-- odgovarajuća prava pristupa
+- object storage
+- IAM/RBAC
+- mrežna izolacija
+- automatizirani deployment
 
-Centralni **Jump Host** predstavlja jedinu javno dostupnu virtualnu mašinu i koristi se za administrativni pristup privatnim Moodle instancama.
+Broj developer okruženja definira se kroz:
 
-Developer okruženja međusobno nisu direktno povezana.
+    data/users.csv
+
+Primjer:
+
+    username,role,environment
+    dev1,developer,dev
+    dev2,developer,dev
+    lead,lead,management
+
+Terraform koristi `csvdecode()` i na temelju korisničkih podataka dinamički generira potrebne resurse.
 
 ---
 
 # Azure arhitektura
 
-Azure implementacija koristi sljedeće servise:
+Azure implementacija koristi centralni management Resource Group i zasebni Resource Group za svakog developera.
 
-- Azure Resource Groups
-- Azure Virtual Network
-- Azure Subnets
-- Azure Network Security Groups
-- Azure Application Security Groups
-- Azure Virtual Machines
-- Azure Managed Disks
-- Azure Standard Load Balancer
-- Azure Storage Account
-- Azure Blob Storage
-- Azure Files
-- Azure RBAC
-- Managed Identities
-- VNet Peering
-
-Arhitektura koristi centralnu management mrežu i zasebnu mrežu za svakog developera.
+Svaki developer dobiva vlastiti izolirani VNet.
 
 Primjer:
 
-    Management VNet
+    dev1 -> 10.10.1.0/24
+    dev2 -> 10.10.2.0/24
+
+Management VNet koristi:
+
     10.10.100.0/24
 
-    DEV1 VNet
-    10.10.1.0/24
+Management VNet povezan je s developer VNetovima pomoću VNet Peeringa.
 
-    DEV2 VNet
-    10.10.2.0/24
+Developer mreže nisu međusobno povezane.
 
-Management VNet povezan je s developer VNetovima pomoću **VNet Peeringa**.
+Samo Jump Host ima javnu IP adresu.
 
-Ne postoji direktni peering između developer mreža.
+Moodle virtualne mašine nemaju direktan javni pristup.
 
-Svaki developer ima dvije Moodle virtualne mašine iza privatnog Azure Standard Load Balancera.
+![Azure Architecture](diagrams/azure-architecture.png)
 
-Jump Host je jedina virtualna mašina s Public IP adresom.
-
-Detaljniji opis Azure arhitekture nalazi se u:
+Detaljna Azure arhitektura opisana je u:
 
     docs/azure-architecture.md
 
 ---
 
-# OpenStack arhitektura
+# Azure Compute
 
-OpenStack implementacija koristi:
+Za svakog developera Terraform kreira dvije Moodle virtualne mašine.
 
-- Nova – virtualne mašine
-- Neutron – mreže, subneti, routeri i security groups
-- Cinder – block storage
-- Swift – object storage
-- Octavia – load balancing
-- Terraform – provisioning infrastrukture
-- Ansible – konfiguracija operacijskog sustava i Moodle aplikacije
+Konfiguracija:
 
-Za svakog developera kreira se zasebna privatna mreža.
+    OS: Ubuntu 22.04
+    VM size: Standard_B2s
+    vCPU: 2
+    RAM: 4 GB
 
-Primjer:
+Svaka Moodle virtualna mašina ima:
 
-    Management network
-    10.10.100.0/24
+- OS disk
+- dodatni 10 GB managed data disk
+- privatnu IP adresu
+- system-assigned Managed Identity
+- članstvo u odgovarajućem Application Security Groupu
 
-    DEV1 network
-    10.10.1.0/24
-
-    DEV2 network
-    10.10.2.0/24
-
-Developer mreže međusobno nisu povezane.
-
-Jump Host ima pristup management mreži i dodatne mrežne interfaceove prema developer mrežama.
-
-Na taj način administrator može pristupati Moodle virtualnim mašinama preko Jump Hosta bez direktnog povezivanja developer mreža.
-
-Svaki developer ima:
-
-- dvije Moodle virtualne mašine
-- privatni Octavia Load Balancer
-- Cinder data disk
-- Swift backup container
-- shared file storage
-
-U Academy okruženju koristi se **RHEL 8** image.
-
-Zbog ograničenja dostupnog OpenStack Academy flavora koristi se:
-
-    2 vCPU
-    2 GB RAM
-
-iako projektni zahtjev predviđa:
-
-    2 vCPU
-    4 GB RAM
-
-To ograničenje proizlazi iz dostupnih resursa Academy laboratorija, a ne iz Terraform dizajna.
-
-Detaljniji opis nalazi se u:
-
-    docs/openstack.md
+Dvije Moodle instance predstavljaju osnovu za simulaciju visoke dostupnosti.
 
 ---
 
-# High Availability
+# Azure Networking
 
-Za svakog developera kreiraju se dvije Moodle instance.
+Azure mrežni dizajn uključuje:
 
-Primjer:
+- management VNet
+- zaseban VNet za svakog developera
+- developer subnet
+- management subnet
+- VNet Peering između management i developer mreža
+- NSG pravila
+- Application Security Groups
 
-    dev1-moodle-1
-    dev1-moodle-2
+Developer mreže nisu direktno povezane jedna s drugom.
 
-    dev2-moodle-1
-    dev2-moodle-2
-
-Instance se nalaze iza privatnog load balancera.
-
-Azure koristi:
-
-    Azure Standard Load Balancer
-
-OpenStack koristi:
-
-    Octavia Load Balancer
-
-Load balanceri distribuiraju HTTP promet između dvije Moodle instance.
-
-Implementacija predstavlja infrastrukturnu simulaciju visoke dostupnosti. Potpuna produkcijska Moodle HA implementacija zahtijevala bi dodatnu konfiguraciju zajedničke baze podataka, session managementa i potpuno redundantnog shared storage sustava.
+Na taj način je osigurana izolacija developer workloadova.
 
 ---
 
-# Storage
+# Azure Load Balancer
 
-Projekt koristi tri tipa storagea.
+Za svakog developera kreira se zaseban privatni Azure Standard Load Balancer.
 
-## Block storage
+Load Balancer koristi:
 
-Svaka Moodle virtualna mašina ima dodatni data disk.
+    Protocol: HTTP
+    Port: 80
+    Health endpoint: /moodle-health.html
 
-Azure:
+Backend pool sadrži dvije Moodle instance pripadajućeg developera.
 
-    Azure Managed Disk
-    10 GB
+Za projekt je odabran Azure Load Balancer umjesto Application Gatewaya jer je za zahtjeve projekta dovoljan jednostavan privatni load balancing.
 
-OpenStack:
+Detaljno obrazloženje nalazi se u:
 
-    Cinder Volume
-    10 GB
-
-Disk se koristi za aplikacijske podatke.
+    docs/azure-lb-vs-app-gateway.md
 
 ---
 
-## Shared file storage
+# Azure Storage
 
-Azure koristi:
+Za svakog developera kreira se zaseban Storage Account.
 
-    Azure Files
+Koriste se dvije vrste storagea:
 
-OpenStack Academy okruženje nije omogućilo potvrdu dostupnosti Manila servisa.
+## Blob Storage
 
-Zbog toga je implementiran NFS fallback.
+Koristi se za backup Moodle podataka.
 
-Prva Moodle instanca developera služi kao NFS server, dok druga Moodle instanca automatski montira shared direktorij.
+Container:
 
-NFS pristup ograničen je samo na developerovu privatnu mrežu.
+    moodle-backups
 
-Ovo predstavlja funkcionalnu laboratorijsku alternativu managed file-storage servisu. U produkcijskom OpenStack okruženju preporučeno bi bilo koristiti Manila ili drugi redundantni shared-storage servis.
+## Azure Files
 
----
+Koristi se kao shared file storage između Moodle instanci istog developera.
 
-## Object storage
-
-Azure koristi:
-
-    Azure Blob Storage
-
-OpenStack koristi:
-
-    Swift Object Storage
-
-Za svakog developera kreira se zaseban backup container.
-
-Primjer:
-
-    techsprint-dev1-moodle-backups
-    techsprint-dev2-moodle-backups
-
-Backup skripta nalazi se u:
-
-    scripts/backup-openstack.sh
+Pristup storage resursima dodatno je ograničen pomoću Managed Identity i Azure RBAC konfiguracije.
 
 ---
 
-# Sigurnost
+# Azure IAM i RBAC
 
-Projekt koristi princip najmanjih potrebnih privilegija i izolaciju razvojnih okruženja.
+Projekt definira prilagođenu Azure RBAC ulogu:
 
-Glavne sigurnosne mjere su:
+    TechSprint VM Power Operator
 
-- samo Jump Host ima javni pristup
-- Moodle virtualne mašine nemaju Public IP
-- developer mreže međusobno nisu direktno povezane
-- pristup virtualnim mašinama kontrolira se security pravilima
-- storage pristup ograničen je prema developer okruženju
-- SSH pristup Moodle instancama izvodi se preko Jump Hosta
-- credentiali i private key datoteke nisu spremljeni u Git repozitoriju
-- osjetljive Terraform datoteke isključene su pomoću `.gitignore`
-
----
-
-# IAM i RBAC
-
-## Azure
-
-Azure implementacija koristi:
-
-- Azure RBAC
-- Managed Identities
-- custom VM Power Operator role
-
-Developer dobiva prava upravljanja vlastitim virtualnim mašinama.
+Developer treba moći upravljati samo vlastitim virtualnim mašinama.
 
 Predviđene operacije uključuju:
 
@@ -267,31 +172,246 @@ Predviđene operacije uključuju:
 - stop
 - restart
 
-DevOps Lead ima prava upravljanja developer okruženjima.
+DevOps Lead ima pristup svim developer okruženjima.
 
-Detalji:
+Azure Entra korisnici nisu automatski kreirani zbog ograničenja studentske Azure pretplate.
+
+Terraform zato podržava unos postojećih principal ID vrijednosti.
+
+Detalji se nalaze u:
 
     docs/azure-rbac.md
 
 ---
 
-## OpenStack
+# Azure ograničenja
 
-Produkcijski dizajn predviđa zaseban OpenStack projekt za svakog developera te management projekt za DevOps Lead korisnika.
+Azure implementacija nije mogla biti potpuno runtime deployana zbog ograničenja pretplate:
 
-Time se omogućuje stvarna izolacija resursa na Keystone razini.
+    Azure for Students Starter
 
-Academy korisnik nema administratorska prava za:
+Pretplata ne dopušta registraciju svih potrebnih Azure resource providera, uključujući servise potrebne za Compute, Network i Storage resurse.
 
-- kreiranje projekata
-- kreiranje korisnika
-- kreiranje grupa
-- kreiranje custom rola
-- izmjenu Keystone policyja
+Zbog toga je Azure Terraform konfiguracija razvijena i validirana, ali finalni deployment cijele infrastrukture nije izvršen.
 
-Zbog toga se laboratorijska implementacija izvršava unutar dostupnog projekta `finance`.
+Detalji se nalaze u:
 
-Detalji:
+    docs/azure-limitations.md
+
+---
+
+# OpenStack arhitektura
+
+OpenStack implementacija koristi:
+
+- Nova
+- Neutron
+- Cinder
+- Swift
+- Octavia
+
+Za svakog developera kreira se zasebna privatna mreža.
+
+Primjer:
+
+    dev1 -> 10.10.1.0/24
+    dev2 -> 10.10.2.0/24
+
+Management mreža koristi:
+
+    10.10.100.0/24
+
+Samo Jump Host koristi Floating IP.
+
+Moodle instance nemaju Floating IP i nisu direktno dostupne s Interneta.
+
+![OpenStack Architecture](diagrams/openstack-architecture.png)
+
+Detaljna OpenStack implementacija opisana je u:
+
+    docs/openstack.md
+
+---
+
+# OpenStack Jump Host
+
+Jump Host služi kao centralna administratorska točka.
+
+Priključen je na:
+
+- management mrežu
+- dev1 mrežu
+- dev2 mrežu
+
+Za dodatne developere Terraform može dinamički priključiti dodatne mrežne interfaceove.
+
+Time Jump Host može pristupati developer okruženjima bez potrebe za direktnim povezivanjem developer mreža.
+
+SSH pristup Moodle instancama koristi ProxyJump preko Jump Hosta.
+
+---
+
+# OpenStack Compute
+
+Za svakog developera kreiraju se dvije Moodle instance.
+
+U Red Hat Academy OpenStack laboratoriju koristi se:
+
+    Image: rhel8
+    Flavor: default
+    vCPU: 2
+    RAM: 2 GB
+
+Projektni zahtjev predviđa 4 GB RAM-a, ali dostupni Academy flavor `default` ima 2 GB RAM-a.
+
+To predstavlja ograničenje laboratorijskog okruženja, a ne Terraform dizajna.
+
+Svaka Moodle instanca koristi:
+
+- privatnu statičku IP adresu
+- zaseban Neutron port
+- developer Security Group
+- dodatni Cinder data disk
+- metadata oznake projekta i vlasnika
+
+Primjer statičkih IP adresa:
+
+    dev1-moodle-1 -> 10.10.1.11
+    dev1-moodle-2 -> 10.10.1.12
+
+    dev2-moodle-1 -> 10.10.2.11
+    dev2-moodle-2 -> 10.10.2.12
+
+---
+
+# OpenStack Security Groups
+
+Jump Host Security Group omogućuje SSH pristup.
+
+Za svakog developera kreira se zaseban Moodle Security Group.
+
+Dopušten je:
+
+    SSH 22
+    HTTP 80
+
+s odgovarajuće developer mreže.
+
+Moodle virtualne mašine nisu direktno dostupne s javne mreže.
+
+---
+
+# OpenStack Load Balancer
+
+Za svakog developera definiran je zaseban privatni Octavia Load Balancer.
+
+Konfiguracija uključuje:
+
+- Load Balancer
+- HTTP Listener
+- backend pool
+- dvije Moodle instance
+- health monitor
+
+Pool algoritam:
+
+    ROUND_ROBIN
+
+Health check koristi:
+
+    /moodle-health.html
+
+Terraform provider koji se koristi u Academy okruženju ne podržava `tags` argument na `openstack_lb_monitor_v2`, pa health monitor nema tagove.
+
+Ostali podržani Octavia resursi koriste projektne tagove.
+
+---
+
+# OpenStack Block Storage
+
+Svaka Moodle virtualna mašina dobiva zaseban Cinder volume.
+
+Veličina:
+
+    10 GB
+
+Disk je namijenjen aplikacijskim i Moodle podacima.
+
+Cinder volume koristi metadata vrijednosti poput:
+
+    project = techsprint
+    environment = testing
+    role = moodle-data
+    owner = <developer>
+
+---
+
+# OpenStack Shared File Storage
+
+Red Hat Academy okruženje nije omogućilo potvrdu dostupnosti Manila servisa.
+
+Zbog toga je implementiran NFS fallback.
+
+Za svakog developera:
+
+- Moodle VM 1 služi kao NFS server
+- Moodle VM 2 montira shared direktorij
+- shared podaci nalaze se na Cinder-backed `/data` disku
+
+NFS export ograničen je samo na developerovu privatnu mrežu.
+
+Koristi se:
+
+    root_squash
+
+Ovo je laboratorijska zamjena za managed shared storage.
+
+U produkcijskom OpenStack okruženju preporučeno bi bilo koristiti Manila ili drugi redundantni shared-storage servis.
+
+---
+
+# OpenStack Object Storage
+
+Za svakog developera Terraform kreira zaseban Swift container.
+
+Primjer:
+
+    techsprint-dev1-moodle-backups
+    techsprint-dev2-moodle-backups
+
+Swift container koristi se za backup Moodle podataka.
+
+Backup automatizacija nalazi se u:
+
+    scripts/backup-openstack.sh
+
+---
+
+# OpenStack IAM i RBAC
+
+Produkcijski dizajn predviđa zaseban OpenStack projekt za svakog developera i management projekt za DevOps Lead korisnika.
+
+Primjer:
+
+    Developer 1 -> Project dev1
+    Developer 2 -> Project dev2
+    DevOps Lead -> pristup svim developer projektima
+
+Na taj način developer bi imao pristup samo vlastitim cloud resursima.
+
+Red Hat Academy student account nema administratorska prava za:
+
+- stvaranje projekata
+- stvaranje korisnika
+- stvaranje grupa
+- stvaranje custom rola
+- promjene Keystone policy konfiguracije
+
+Zbog toga se laboratorijska implementacija izvodi unutar postojećeg projekta:
+
+    finance
+
+Detalji se nalaze u:
 
     docs/openstack-iam-rbac.md
 
@@ -299,36 +419,31 @@ Detalji:
 
 # Automatizacija
 
-Automatizacija koristi CSV datoteku:
+Projekt koristi CSV-driven provisioning.
+
+Ulazna datoteka:
 
     data/users.csv
 
-Primjer sadržaja:
-
-    username,role,environment
-    dev1,developer,dev
-    dev2,developer,dev
-    lead,lead,management
-
-Terraform učitava CSV pomoću funkcije:
+Terraform učitava korisnike i njihove uloge pomoću:
 
     csvdecode()
 
-Na temelju sadržaja CSV datoteke dinamički se kreiraju developer okruženja.
+Na temelju toga dinamički generira developer resurse.
 
-To znači da Terraform konfiguracija nije ograničena samo na `dev1` i `dev2`.
+Projekt zbog toga nije ograničen na `dev1` i `dev2`.
 
-Dodavanjem novog developera u CSV može se generirati dodatno razvojno okruženje bez ručnog dupliciranja Terraform resursa.
+Dodavanjem novog developera u CSV može se generirati dodatno cloud okruženje bez dupliciranja Terraform konfiguracije.
 
 ---
 
-# Deployment flow
+# OpenStack deployment flow
 
-OpenStack deployment automatiziran je skriptom:
+OpenStack deployment automatiziran je pomoću:
 
     scripts/deploy-openstack.sh
 
-Proces izgleda ovako:
+Deployment proces:
 
     users.csv
         |
@@ -353,42 +468,55 @@ Proces izgleda ovako:
         v
     Moodle konfiguracija
 
-Dinamički Ansible inventory generira:
+Dinamički inventory generira:
 
     scripts/generate-ansible-inventory.py
 
-Na taj način Terraform i Ansible ostaju povezani bez ručnog unosa IP adresa.
+Na taj način Terraform i Ansible povezani su bez ručnog unosa IP adresa.
 
 ---
 
 # Ansible
 
-Ansible se koristi nakon provisioning faze za konfiguraciju virtualnih mašina.
-
-Konfiguracija se nalazi u:
+Ansible konfiguracija nalazi se u:
 
     ansible/
+    ├── ansible.cfg
+    ├── inventory/
+    │   └── inventory.ini
+    └── playbooks/
+        ├── configure-file-storage.yml
+        └── configure-moodle.yml
 
-Glavni playbookovi su:
+Glavni Moodle playbook:
 
     ansible/playbooks/configure-moodle.yml
+
+automatizira:
+
+- instalaciju Apache HTTP servera
+- instalaciju MariaDB
+- instalaciju PHP paketa
+- konfiguraciju firewalla
+- formatiranje i mountanje data diska
+- stvaranje Moodle baze
+- stvaranje Moodle DB korisnika
+- kloniranje Moodle izvornog koda
+- Moodle CLI instalaciju
+- stvaranje health endpointa
+
+Lozinke se ne pohranjuju u Git repozitorij.
+
+Playbook ih očekuje putem environment varijabli:
+
+    MOODLE_DB_PASSWORD
+    MOODLE_ADMIN_PASSWORD
+
+Shared storage konfigurira:
+
     ansible/playbooks/configure-file-storage.yml
 
-`configure-moodle.yml` konfigurira:
-
-- Apache HTTP Server
-- MariaDB
-- PHP
-- Moodle
-- data disk
-- Moodle bazu
-- Moodle administratora
-- firewall
-- health endpoint
-
-`configure-file-storage.yml` konfigurira shared NFS storage između dvije Moodle instance istog developera.
-
-SSH pristup privatnim Moodle virtualnim mašinama koristi Jump Host pomoću ProxyJump konfiguracije.
+Playbook konfigurira NFS server na primarnoj Moodle instanci te automatski mount na sekundarnoj instanci.
 
 ---
 
@@ -404,15 +532,13 @@ Backup uključuje:
 - Moodle aplikacijske datoteke
 - Moodle data direktorij
 
-Backup se zatim sprema u developerov Swift container.
-
-Na taj način svaki developer ima odvojeni object-storage prostor za backup.
+Backup se sprema u odgovarajući Swift Object Storage container developera.
 
 ---
 
-# Naming convention
+# Naming i tagging
 
-Resursi koriste konzistentnu naming konvenciju.
+Projekt koristi konzistentnu naming konvenciju.
 
 Primjeri:
 
@@ -422,33 +548,20 @@ Primjeri:
     techsprint-dev1-moodle-sg
     techsprint-dev1-moodle-backups
 
-Detaljniji opis naming konvencije nalazi se u:
-
-    docs/naming-convention.md
-    docs/naming-and-tagging.md
-
----
-
-# Tagging i metadata
-
-Resursi koriste standardne oznake:
+Standardne oznake:
 
     project:techsprint
     environment:testing
 
-Dodatno se koriste oznake:
+Dodatne oznake koriste:
 
     owner:<developer>
     role:<resource-role>
 
-Primjer:
+Detalji se nalaze u:
 
-    project:techsprint
-    environment:testing
-    owner:dev1
-    role:moodle
-
-Azure koristi Azure tags, dok OpenStack koristi tags ili metadata ovisno o mogućnostima pojedinog resursa i Terraform providera.
+    docs/naming-convention.md
+    docs/naming-and-tagging.md
 
 ---
 
@@ -506,8 +619,8 @@ Azure koristi Azure tags, dok OpenStack koristi tags ili metadata ovisno o mogu�
     |   +-- inventory/
     |   |   +-- inventory.ini
     |   +-- playbooks/
-    |       +-- configure-moodle.yml
     |       +-- configure-file-storage.yml
+    |       +-- configure-moodle.yml
     |
     +-- scripts/
     |   +-- deploy-azure.sh
@@ -539,7 +652,7 @@ Azure koristi Azure tags, dok OpenStack koristi tags ili metadata ovisno o mogu�
 
 ## `versions.tf`
 
-Definira minimalnu Terraform verziju i potrebne providere.
+Definira potrebnu Terraform verziju i Azure providere.
 
 ## `providers.tf`
 
@@ -547,9 +660,9 @@ Konfigurira AzureRM i AzAPI providere.
 
 ## `variables.tf`
 
-Definira ulazne varijable poput:
+Definira ulazne parametre poput:
 
-- Azure lokacije
+- lokacije
 - resource group naziva
 - CSV putanje
 - VM sizea
@@ -558,11 +671,11 @@ Definira ulazne varijable poput:
 
 ## `locals.tf`
 
-Učitava korisnike iz CSV datoteke i generira strukture podataka koje Terraform koristi za dinamičko kreiranje resursa.
+Učitava korisnike iz CSV datoteke i generira Terraform strukture koje se koriste za dinamičko kreiranje resursa.
 
 ## `resource-group.tf`
 
-Kreira centralni management Resource Group i developer Resource Groupove.
+Kreira centralni Resource Group i developer Resource Groupove.
 
 ## `network.tf`
 
@@ -573,38 +686,32 @@ Kreira:
 - subnete
 - VNet peering
 
-Developer mreže ostaju međusobno izolirane.
-
 ## `security.tf`
 
-Definira Network Security Groups i sigurnosna pravila.
+Definira Network Security Groups i odgovarajuća sigurnosna pravila.
 
 ## `asg.tf`
 
-Definira Application Security Groups za grupiranje virtualnih mašina prema njihovoj ulozi.
+Definira Application Security Groups.
 
 ## `compute.tf`
 
 Kreira:
 
 - Jump Host
-- dvije Moodle virtualne mašine po developeru
+- Moodle virtualne mašine
 - mrežne interfaceove
 - OS diskove
-- dodatne data diskove
+- data diskove
 - Managed Identities
 
 ## `loadbalancer.tf`
 
 Kreira privatni Azure Standard Load Balancer za svakog developera.
 
-Load balancer koristi health probe:
-
-    /moodle-health.html
-
 ## `storage.tf`
 
-Kreira developer storage accountove, Blob container i Azure Files share.
+Kreira developer Storage Accounts, Blob Storage i Azure Files.
 
 ## `storage-rbac.tf`
 
@@ -620,7 +727,7 @@ Definira RBAC model i custom VM Power Operator role.
 
 ## `outputs.tf`
 
-Izlaže ključne podatke o kreiranoj infrastrukturi.
+Izlaže podatke o kreiranoj infrastrukturi.
 
 ---
 
@@ -636,17 +743,17 @@ Konfigurira OpenStack provider.
 
 ## `variables.tf`
 
-Definira ulazne parametre OpenStack deploymenta.
+Definira ulazne parametre deploymenta.
 
 ## `locals.tf`
 
-Učitava korisnike iz CSV datoteke i dinamički generira:
+Učitava korisnike iz CSV datoteke i generira:
 
-- developere
-- lead korisnike
+- developer strukturu
+- lead strukturu
 - developer mreže
 - Moodle instance
-- statičke Moodle IP adrese
+- statičke IP adrese
 
 ## `network.tf`
 
@@ -660,26 +767,19 @@ Kreira:
 
 ## `jump-network.tf`
 
-Dodaje Jump Hostu dodatne mrežne interfaceove prema developer mrežama.
-
-To omogućuje administrativni pristup bez međusobnog povezivanja developer mreža.
+Dodaje Jump Hostu mrežne interfaceove prema developer mrežama.
 
 ## `security.tf`
 
-Kreira security groups za:
-
-- Jump Host
-- Moodle instance
-
-Moodle instance nisu direktno dostupne s Interneta.
+Kreira security groups za Jump Host i Moodle instance.
 
 ## `keypair.tf`
 
-Konfigurira SSH keypair za pristup virtualnim mašinama.
+Konfigurira SSH keypair.
 
 ## `moodle-ports.tf`
 
-Kreira eksplicitne Neutron portove sa statičkim IP adresama za Moodle virtualne mašine.
+Kreira eksplicitne Neutron portove sa statičkim IP adresama.
 
 ## `compute.tf`
 
@@ -691,19 +791,19 @@ Kreira i povezuje Floating IP samo s Jump Hostom.
 
 ## `loadbalancer.tf`
 
-Kreira privatni Octavia load balancer za svakog developera.
+Kreira privatni Octavia Load Balancer za svakog developera.
 
 Konfigurira:
 
-- load balancer
-- listener
-- pool
-- dvije Moodle member instance
+- Load Balancer
+- Listener
+- Pool
+- Moodle member instance
 - HTTP health monitor
 
 ## `storage.tf`
 
-Kreira zaseban Cinder data volume za svaku Moodle virtualnu mašinu i povezuje ga s odgovarajućom instancom.
+Kreira zaseban Cinder data disk za svaku Moodle virtualnu mašinu.
 
 ## `object-storage.tf`
 
@@ -711,13 +811,7 @@ Kreira zaseban Swift backup container za svakog developera.
 
 ## `outputs.tf`
 
-Izlaže:
-
-- Jump Host adresu
-- Moodle IP adrese
-- developer mreže
-- load balancer VIP adrese
-- ostale podatke potrebne za automatizaciju
+Izlaže podatke potrebne za administraciju i daljnju automatizaciju.
 
 ---
 
@@ -729,34 +823,34 @@ Služi za automatizirano pokretanje Azure Terraform deploymenta.
 
 ## `deploy-openstack.sh`
 
-Predstavlja glavni OpenStack deployment workflow.
+Glavna je OpenStack deployment skripta.
 
-Skripta:
+Izvršava:
 
-1. provjerava ulazne parametre
-2. provjerava potrebne environment varijable
-3. provjerava OpenStack credentials
-4. izvršava Terraform init
-5. izvršava Terraform validate
-6. izvršava Terraform apply
-7. sprema Terraform output
-8. generira Ansible inventory
-9. pokreće Moodle Ansible konfiguraciju
-10. konfigurira shared file storage
+1. provjeru ulaznih parametara
+2. provjeru potrebnih environment varijabli
+3. provjeru OpenStack credentiala
+4. Terraform init
+5. Terraform validate
+6. Terraform apply
+7. spremanje Terraform outputa
+8. generiranje Ansible inventoryja
+9. Moodle Ansible konfiguraciju
+10. shared storage konfiguraciju
 
 ## `generate-ansible-inventory.py`
 
-Dinamički generira Ansible inventory iz Terraform outputa.
+Generira Ansible inventory iz Terraform outputa.
 
 ## `backup-openstack.sh`
 
-Automatizira backup Moodle baze i aplikacijskih podataka u Swift Object Storage.
+Automatizira backup Moodle baze i podataka u Swift Object Storage.
 
 ---
 
 # Dokumentacija
 
-Dodatna dokumentacija nalazi se u direktoriju:
+Dodatna dokumentacija nalazi se u:
 
     docs/
 
@@ -764,11 +858,11 @@ Dokumenti uključuju:
 
 - `azure-architecture.md` – detaljan opis Azure arhitekture
 - `azure-cost-estimate.md` – procjena Azure troškova
-- `azure-lb-vs-app-gateway.md` – usporedba Load Balancera i Application Gatewaya
+- `azure-lb-vs-app-gateway.md` – obrazloženje izbora load balancing rješenja
 - `azure-limitations.md` – ograničenja Azure Students Starter pretplate
-- `azure-rbac.md` – Azure RBAC model
-- `azure-resource-selection.md` – obrazloženje izbora Azure servisa
-- `naming-and-tagging.md` – naming i tagging pravila
+- `azure-rbac.md` – Azure RBAC dizajn
+- `azure-resource-selection.md` – obrazloženje izbora Azure resursa
+- `naming-and-tagging.md` – tagging pravila
 - `naming-convention.md` – naming konvencija
 - `openstack-iam-rbac.md` – OpenStack IAM/RBAC dizajn
 - `openstack.md` – detaljna OpenStack implementacija i ograničenja
@@ -777,48 +871,48 @@ Dokumenti uključuju:
 
 # Validacija
 
-Azure Terraform konfiguracija prošla je Terraform sintaksnu i konfiguracijsku validaciju.
+Azure Terraform konfiguracija razvijena je i validirana u granicama dostupne studentske Azure pretplate.
 
-Potpuni Azure runtime deployment nije bilo moguće izvršiti zbog ograničenja **Azure for Students Starter** pretplate i nedostupne registracije potrebnih resource providera.
+Potpuni Azure runtime deployment nije bilo moguće izvršiti zbog ograničenja Azure for Students Starter pretplate.
 
 OpenStack Terraform konfiguracija uspješno je prošla:
 
     terraform validate
 
-Ansible playbookovi uspješno su prošli syntax check.
+Ansible playbookovi prošli su syntax check.
 
-Python inventory generator uspješno je provjeren pomoću:
+Python inventory generator provjeren je pomoću:
 
     python3 -m py_compile
 
-Shell deployment i backup skripte provjerene su pomoću:
+Shell skripte provjerene su pomoću:
 
     bash -n
 
-Dio OpenStack infrastrukture uspješno je testiran u Red Hat Academy okruženju, uključujući networking, Jump Host i Terraform provisioning.
+Dio OpenStack infrastrukture uspješno je kreiran i testiran u Red Hat Academy okruženju, uključujući networking i Jump Host.
 
 ---
 
 # Ograničenja OpenStack Academy okruženja
 
-Finalni end-to-end OpenStack deployment nije mogao biti dovršen zbog infrastrukturnih ograničenja Academy laboratorija.
+Finalni end-to-end deployment nije mogao biti dovršen zbog infrastrukturnih ograničenja Red Hat Academy laboratorija.
 
-Tijekom testiranja pojavila se Nova greška:
+Pri kreiranju novih virtualnih strojeva OpenStack Nova vratila je:
 
     No valid host was found. There are not enough hosts available.
 
-To ukazuje na nedostatak dostupnog compute kapaciteta u Academy okruženju.
+Problem je povezan s raspoloživim compute kapacitetom laboratorijskog OpenStack okruženja.
 
 Dodatno:
 
 - Keystone administratorske operacije vraćaju HTTP 403
-- dostupni flavor ima 2 GB RAM-a umjesto projektom traženih 4 GB
-- Octavia testni load balancer ostao je u `PENDING_CREATE` stanju
+- dostupni flavor ima 2 GB RAM-a umjesto traženih 4 GB
+- Octavia testni Load Balancer ostao je u `PENDING_CREATE` stanju
 - dostupnost Manila servisa nije bilo moguće potvrditi
 
-Zbog navedenih ograničenja finalna konfiguracija nije predstavljena kao potpuno runtime verificirani deployment.
+Zbog toga projekt ne tvrdi da je finalni OpenStack deployment potpuno runtime izvršen.
 
-Terraform konfiguracija i automatizacijski kod dovršeni su i validirani u granicama dostupnog laboratorijskog okruženja.
+Terraform konfiguracija i automatizacijski kod dovršeni su i validirani u granicama dostupnog Academy okruženja.
 
 ---
 
@@ -826,23 +920,21 @@ Terraform konfiguracija i automatizacijski kod dovršeni su i validirani u grani
 
 Projekt nije ograničen na dva developera.
 
-Broj developer okruženja kontrolira se putem:
+Broj developer okruženja definira se u:
 
     data/users.csv
 
-Dodavanjem novog retka, primjerice:
+Dodavanjem novog retka:
 
     dev3,developer,dev
 
-Terraform može generirati dodatno izolirano developer okruženje bez dupliciranja infrastrukturnog koda.
-
-To uključuje novu mrežu, Moodle instance, load balancer, storage i sigurnosne resurse.
+Terraform može generirati novo izolirano developer okruženje bez ručnog dupliciranja infrastrukturnog koda.
 
 ---
 
 # Status projekta
 
-Implementirano:
+Implementirano je:
 
 - Azure Terraform infrastruktura
 - OpenStack Terraform infrastruktura
@@ -852,21 +944,22 @@ Implementirano:
 - centralni Jump Host
 - privatni load balancing
 - block storage
-- shared storage
+- shared file storage
 - object storage
-- security groups / NSG
+- Security Groups / NSG
+- Application Security Groups
 - Azure RBAC dizajn
 - OpenStack IAM/RBAC dizajn
 - Managed Identities
-- Terraform tagging i metadata
+- naming i tagging
 - Ansible Moodle konfiguracija
-- automatski Ansible inventory
+- automatsko generiranje Ansible inventoryja
 - OpenStack deployment skripta
 - Azure deployment skripta
 - OpenStack backup skripta
-- arhitekturna dokumentacija
-- naming convention
+- Azure arhitekturni dijagram
+- OpenStack arhitekturni dijagram
 - Azure cost estimate
-- dokumentirana ograničenja laboratorijskih okruženja
+- dokumentirana ograničenja cloud laboratorijskih okruženja
 
-Projekt demonstrira automatizirani Infrastructure as Code pristup implementaciji izoliranih razvojnih cloud okruženja na Microsoft Azure i OpenStack platformama.
+Projekt demonstrira Infrastructure as Code pristup automatiziranoj implementaciji izoliranih razvojnih cloud okruženja na Microsoft Azure i OpenStack platformama.
