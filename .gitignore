@@ -2,6 +2,9 @@
 .terraform/
 *.tfstate
 *.tfstate.*
+*.tfplan
+terraform.tfplan
+state-backup.json
 crash.log
 crash.*.log
 
@@ -22,12 +25,26 @@ id_rsa.pub
 clouds.yaml
 secure.yaml
 openrc.sh
+*-openrc
+*-openrc.sh
+*-rc
+*-rc.sh
 
-# Ansible temporary files
+# Ansible temporary/generated files
 *.retry
+ansible/inventory/generated.ini
+terraform-output.json
+
+# Python
+__pycache__/
+*.pyc
+
+# Backups
+backups/
+
+# Logs
+*.log
 
 # OS/editor files
 .DS_Store
 Thumbs.db
-.vscode/__pycache__/
-backups/
