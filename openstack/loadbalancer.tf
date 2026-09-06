@@ -68,11 +68,4 @@ resource "openstack_lb_monitor_v2" "moodle" {
   timeout     = 5
   max_retries = 3
   url_path    = "/moodle-health.html"
-
-  tags = [
-    "project:techsprint",
-    "environment:testing",
-    "owner:${each.key}",
-    "role:health-check"
-  ]
 }
