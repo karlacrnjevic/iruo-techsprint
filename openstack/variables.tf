@@ -33,3 +33,8 @@ variable "ssh_public_key_path" {
   type        = string
   default     = "~/.ssh/techsprint.pub"
 }
+variable "enable_iam" {
+  description = "Enable Keystone IAM provisioning. Requires OpenStack Keystone administrative privileges."
+  type        = bool
+  default     = false
+}

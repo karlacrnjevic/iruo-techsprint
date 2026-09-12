@@ -9,9 +9,9 @@ resource "openstack_compute_instance_v2" "jump" {
   ]
 
   metadata = {
-  project     = "techsprint"
-  environment = "testing"
-  role        = "jump-host"
+    project     = "techsprint"
+    environment = "testing"
+    role        = "jump-host"
   }
 
   network {
