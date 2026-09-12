@@ -16,6 +16,15 @@
     moodle_db_password: "{{ lookup('env', 'MOODLE_DB_PASSWORD') }}"
     moodle_admin_password: "{{ lookup('env', 'MOODLE_ADMIN_PASSWORD') }}"
 
+    swift_mount_point: /mnt/swift-backups
+    swift_container: "techsprint-{{ developer }}-moodle-backups"
+    swift_auth_url: "{{ lookup('env', 'OS_AUTH_URL') }}"
+    swift_username: "{{ lookup('env', 'OS_USERNAME') }}"
+    swift_password: "{{ lookup('env', 'OS_PASSWORD') }}"
+    swift_project_name: "{{ lookup('env', 'OS_PROJECT_NAME') }}"
+    swift_user_domain_name: "{{ lookup('env', 'OS_USER_DOMAIN_NAME') | default('Default', true) }}"
+    swift_project_domain_name: "{{ lookup('env', 'OS_PROJECT_DOMAIN_NAME') | default('Default', true) }}"
+
   pre_tasks:
     - name: Verify Moodle database password is provided
       ansible.builtin.assert:
@@ -28,6 +37,16 @@
         that:
           - moodle_admin_password | length > 0
         fail_msg: "MOODLE_ADMIN_PASSWORD environment variable is required."
+
+    - name: Verify OpenStack credentials are available for Swift mount
+      ansible.builtin.assert:
+        that:
+          - swift_auth_url | length > 0
+          - swift_username | length > 0
+          - swift_password | length > 0
+          - swift_project_name | length > 0
+        fail_msg: "OpenStack OS_* environment variables are required for Swift mount."
+      no_log: true
 
   tasks:
     - name: Install required packages
@@ -103,6 +122,107 @@
         fstype: xfs
         opts: defaults
         state: mounted
+
+    - name: Install FUSE for Swift object storage mount
+      ansible.builtin.dnf:
+        name:
+          - fuse
+        state: present
+
+    - name: Enable FUSE allow_other
+      ansible.builtin.lineinfile:
+        path: /etc/fuse.conf
+        regexp: '^#?user_allow_other'
+        line: user_allow_other
+        create: true
+        mode: "0644"
+
+    - name: Check whether rclone is installed
+      ansible.builtin.command:
+        cmd: rclone version
+      register: rclone_version
+      changed_when: false
+      failed_when: false
+
+    - name: Install rclone
+      ansible.builtin.shell:
+        cmd: curl -fsSL https://rclone.org/install.sh | bash
+      when: rclone_version.rc != 0
+
+    - name: Create rclone configuration directory
+      ansible.builtin.file:
+        path: /root/.config/rclone
+        state: directory
+        owner: root
+        group: root
+        mode: "0700"
+
+    - name: Configure rclone Swift remote
+      ansible.builtin.copy:
+        dest: /root/.config/rclone/rclone.conf
+        owner: root
+        group: root
+        mode: "0600"
+        content: |
+          [swift]
+          type = swift
+          env_auth = true
+
+    - name: Create Swift mount point
+      ansible.builtin.file:
+        path: "{{ swift_mount_point }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Create Swift environment file
+      ansible.builtin.copy:
+        dest: /etc/techsprint-swift.env
+        owner: root
+        group: root
+        mode: "0600"
+        content: |
+          OS_AUTH_URL={{ swift_auth_url }}
+          OS_USERNAME={{ swift_username }}
+          OS_PASSWORD={{ swift_password }}
+          OS_PROJECT_NAME={{ swift_project_name }}
+          OS_USER_DOMAIN_NAME={{ swift_user_domain_name }}
+          OS_PROJECT_DOMAIN_NAME={{ swift_project_domain_name }}
+      no_log: true
+
+    - name: Create rclone Swift mount systemd service
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/techsprint-swift-mount.service
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          [Unit]
+          Description=TechSprint Swift Object Storage Mount
+          Wants=network-online.target
+          After=network-online.target
+
+          [Service]
+          Type=notify
+          EnvironmentFile=/etc/techsprint-swift.env
+          ExecStart=/usr/bin/rclone mount swift:{{ swift_container }} {{ swift_mount_point }} --config=/root/.config/rclone/rclone.conf --allow-other --vfs-cache-mode=writes
+          ExecStop=/bin/fusermount -u {{ swift_mount_point }}
+          Restart=on-failure
+          RestartSec=10
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd after Swift mount service creation
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Enable and start Swift object storage mount
+      ansible.builtin.systemd:
+        name: techsprint-swift-mount.service
+        enabled: true
+        state: started
 
     - name: Create Moodle data directory
       ansible.builtin.file:

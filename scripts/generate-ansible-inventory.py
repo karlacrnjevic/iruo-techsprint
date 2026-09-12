@@ -55,7 +55,8 @@ def main():
             line = (
                 f"{instance['name']} "
                 f"ansible_host={instance['ip']} "
-                "ansible_user=cloud-user"
+                "ansible_user=cloud-user "
+                f"developer={username}"
             )
 
             if number == 1:
